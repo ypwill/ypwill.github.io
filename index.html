@@ -152,6 +152,1766 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JoToChain/src/leveldb/doc/impl" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="doc.css" />
+<title>Leveldb file layout and compactions</title>
+</head>
+
+<body>
+
+<h1>Files</h1>
+
+The implementation of leveldb is similar in spirit to the
+representation of a single
+<a target="_blank" rel="noopener" href="http://research.google.com/archive/bigtable.html">
+Bigtable tablet (section 5.3)</a>.
+However the organization of the files that make up the representation
+is somewhat different and is explained below.
+
+<p>
+Each database is represented by a set of files stored in a directory.
+There are several different types of files as documented below:
+<p>
+<h2>Log files</h2>
+<p>
+A log file (*.log) stores a sequence of recent updates.  Each update
+is appended to the current log file.  When the log file reaches a
+pre-determined size (approximately 4MB by default), it is converted
+to a sorted table (see below) and a new log file is created for future
+updates.
+<p>
+A copy of the current log file is kept in an in-memory structure (the
+<code>memtable</code>).  This copy is consulted on every read so that read
+operations reflect all logged updates.
+<p>
+<h2>Sorted tables</h2>
+<p>
+A sorted table (*.sst) stores a sequence of entries sorted by key.
+Each entry is either a value for the key, or a deletion marker for the
+key.  (Deletion markers are kept around to hide obsolete values
+present in older sorted tables).
+<p>
+The set of sorted tables are organized into a sequence of levels.  The
+sorted table generated from a log file is placed in a special <code>young</code>
+level (also called level-0).  When the number of young files exceeds a
+certain threshold (currently four), all of the young files are merged
+together with all of the overlapping level-1 files to produce a
+sequence of new level-1 files (we create a new level-1 file for every
+2MB of data.)
+<p>
+Files in the young level may contain overlapping keys.  However files
+in other levels have distinct non-overlapping key ranges.  Consider
+level number L where L >= 1.  When the combined size of files in
+level-L exceeds (10^L) MB (i.e., 10MB for level-1, 100MB for level-2,
+...), one file in level-L, and all of the overlapping files in
+level-(L+1) are merged to form a set of new files for level-(L+1).
+These merges have the effect of gradually migrating new updates from
+the young level to the largest level using only bulk reads and writes
+(i.e., minimizing expensive seeks).
+
+<h2>Manifest</h2>
+<p>
+A MANIFEST file lists the set of sorted tables that make up each
+level, the corresponding key ranges, and other important metadata.
+A new MANIFEST file (with a new number embedded in the file name)
+is created whenever the database is reopened.  The MANIFEST file is
+formatted as a log, and changes made to the serving state (as files
+are added or removed) are appended to this log.
+<p>
+<h2>Current</h2>
+<p>
+CURRENT is a simple text file that contains the name of the latest
+MANIFEST file.
+<p>
+<h2>Info logs</h2>
+<p>
+Informational messages are printed to files named LOG and LOG.old.
+<p>
+<h2>Others</h2>
+<p>
+Other files used for miscellaneous purposes may also be present
+(LOCK, *.dbtmp).
+
+<h1>Level 0</h1>
+When the log file grows above a certain size (1MB by default):
+<ul>
+<li>Create a brand new memtable and log file and direct future updates here
+<li>In the background:
+<ul>
+<li>Write the contents of the previous memtable to an sstable
+<li>Discard the memtable
+<li>Delete the old log file and the old memtable
+<li>Add the new sstable to the young (level-0) level.
+</ul>
+</ul>
+
+<h1>Compactions</h1>
+
+<p>
+When the size of level L exceeds its limit, we compact it in a
+background thread.  The compaction picks a file from level L and all
+overlapping files from the next level L+1.  Note that if a level-L
+file overlaps only part of a level-(L+1) file, the entire file at
+level-(L+1) is used as an input to the compaction and will be
+discarded after the compaction.  Aside: because level-0 is special
+(files in it may overlap each other), we treat compactions from
+level-0 to level-1 specially: a level-0 compaction may pick more than
+one level-0 file in case some of these files overlap each other.
+
+<p>
+A compaction merges the contents of the picked files to produce a
+sequence of level-(L+1) files.  We switch to producing a new
+level-(L+1) file after the current output file has reached the target
+file size (2MB).  We also switch to a new output file when the key
+range of the current output file has grown enough to overlap more than
+ten level-(L+2) files.  This last rule ensures that a later compaction
+of a level-(L+1) file will not pick up too much data from level-(L+2).
+
+<p>
+The old files are discarded and the new files are added to the serving
+state.
+
+<p>
+Compactions for a particular level rotate through the key space.  In
+more detail, for each level L, we remember the ending key of the last
+compaction at level L.  The next compaction for level L will pick the
+first file that starts after this key (wrapping around to the
+beginning of the key space if there is no such file).
+
+<p>
+Compactions drop overwritten values.  They also drop deletion markers
+if there are no higher numbered levels that contain a file whose range
+overlaps the current key.
+
+<h2>Timing</h2>
+
+Level-0 compactions will read up to four 1MB files from level-0, and
+at worst all the level-1 files (10MB).  I.e., we will read 14MB and
+write 14MB.
+
+<p>
+Other than the special level-0 compactions, we will pick one 2MB file
+from level L.  In the worst case, this will overlap ~ 12 files from
+level L+1 (10 because level-(L+1) is ten times the size of level-L,
+and another two at the boundaries since the file ranges at level-L
+will usually not be aligned with the file ranges at level-L+1).  The
+compaction will therefore read 26MB and write 26MB.  Assuming a disk
+IO rate of 100MB/s (ballpark range for modern drives), the worst
+compaction cost will be approximately 0.5 second.
+
+<p>
+If we throttle the background writing to something small, say 10% of
+the full 100MB/s speed, a compaction may take up to 5 seconds.  If the
+user is writing at 10MB/s, we might build up lots of level-0 files
+(~50 to hold the 5*10MB).  This may significantly increase the cost of
+reads due to the overhead of merging more files together on every
+read.
+
+<p>
+Solution 1: To reduce this problem, we might want to increase the log
+switching threshold when the number of level-0 files is large.  Though
+the downside is that the larger this threshold, the more memory we will
+need to hold the corresponding memtable.
+
+<p>
+Solution 2: We might want to decrease write rate artificially when the
+number of level-0 files goes up.
+
+<p>
+Solution 3: We work on reducing the cost of very wide merges.
+Perhaps most of the level-0 files will have their blocks sitting
+uncompressed in the cache and we will only need to worry about the
+O(N) complexity in the merging iterator.
+
+<h2>Number of files</h2>
+
+Instead of always making 2MB files, we could make larger files for
+larger levels to reduce the total file count, though at the expense of
+more bursty compactions.  Alternatively, we could shard the set of
+files into multiple directories.
+
+<p>
+An experiment on an <code>ext3</code> filesystem on Feb 04, 2011 shows
+the following timings to do 100K file opens in directories with
+varying number of files:
+<table class="datatable">
+<tr><th>Files in directory</th><th>Microseconds to open a file</th></tr>
+<tr><td>1000</td><td>9</td>
+<tr><td>10000</td><td>10</td>
+<tr><td>100000</td><td>16</td>
+</table>
+So maybe even the sharding is not necessary on modern filesystems?
+
+<h1>Recovery</h1>
+
+<ul>
+<li> Read CURRENT to find name of the latest committed MANIFEST
+<li> Read the named MANIFEST file
+<li> Clean up stale files
+<li> We could open all sstables here, but it is probably better to be lazy...
+<li> Convert log chunk to a new level-0 sstable
+<li> Start directing new writes to a new log file with recovered sequence#
+</ul>
+
+<h1>Garbage collection of files</h1>
+
+<code>DeleteObsoleteFiles()</code> is called at the end of every
+compaction and at the end of recovery.  It finds the names of all
+files in the database.  It deletes all log files that are not the
+current log file.  It deletes all table files that are not referenced
+from some level and are not the output of an active compaction.
+
+</body>
+</html>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/doc/impl/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/doc/index" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="doc.css" />
+<title>Leveldb</title>
+</head>
+
+<body>
+<h1>Leveldb</h1>
+<address>Jeff Dean, Sanjay Ghemawat</address>
+<p>
+The <code>leveldb</code> library provides a persistent key value store.  Keys and
+values are arbitrary byte arrays.  The keys are ordered within the key
+value store according to a user-specified comparator function.
+
+<p>
+<h1>Opening A Database</h1>
+<p>
+A <code>leveldb</code> database has a name which corresponds to a file system
+directory.  All of the contents of database are stored in this
+directory.  The following example shows how to open a database,
+creating it if necessary:
+<p>
+<pre>
+  #include &lt;assert&gt;
+  #include "leveldb/db.h"
+
+  leveldb::DB* db;
+  leveldb::Options options;
+  options.create_if_missing = true;
+  leveldb::Status status = leveldb::DB::Open(options, "/tmp/testdb", &amp;db);
+  assert(status.ok());
+  ...
+</pre>
+If you want to raise an error if the database already exists, add
+the following line before the <code>leveldb::DB::Open</code> call:
+<pre>
+  options.error_if_exists = true;
+</pre>
+<h1>Status</h1>
+<p>
+You may have noticed the <code>leveldb::Status</code> type above.  Values of this
+type are returned by most functions in <code>leveldb</code> that may encounter an
+error.  You can check if such a result is ok, and also print an
+associated error message:
+<p>
+<pre>
+   leveldb::Status s = ...;
+   if (!s.ok()) cerr &lt;&lt; s.ToString() &lt;&lt; endl;
+</pre>
+<h1>Closing A Database</h1>
+<p>
+When you are done with a database, just delete the database object.
+Example:
+<p>
+<pre>
+  ... open the db as described above ...
+  ... do something with db ...
+  delete db;
+</pre>
+<h1>Reads And Writes</h1>
+<p>
+The database provides <code>Put</code>, <code>Delete</code>, and <code>Get</code> methods to
+modify/query the database.  For example, the following code
+moves the value stored under key1 to key2.
+<pre>
+  std::string value;
+  leveldb::Status s = db-&gt;Get(leveldb::ReadOptions(), key1, &amp;value);
+  if (s.ok()) s = db-&gt;Put(leveldb::WriteOptions(), key2, value);
+  if (s.ok()) s = db-&gt;Delete(leveldb::WriteOptions(), key1);
+</pre>
+
+<h1>Atomic Updates</h1>
+<p>
+Note that if the process dies after the Put of key2 but before the
+delete of key1, the same value may be left stored under multiple keys.
+Such problems can be avoided by using the <code>WriteBatch</code> class to
+atomically apply a set of updates:
+<p>
+<pre>
+  #include "leveldb/write_batch.h"
+  ...
+  std::string value;
+  leveldb::Status s = db-&gt;Get(leveldb::ReadOptions(), key1, &amp;value);
+  if (s.ok()) {
+    leveldb::WriteBatch batch;
+    batch.Delete(key1);
+    batch.Put(key2, value);
+    s = db-&gt;Write(leveldb::WriteOptions(), &amp;batch);
+  }
+</pre>
+The <code>WriteBatch</code> holds a sequence of edits to be made to the database,
+and these edits within the batch are applied in order.  Note that we
+called <code>Delete</code> before <code>Put</code> so that if <code>key1</code> is identical to <code>key2</code>,
+we do not end up erroneously dropping the value entirely.
+<p>
+Apart from its atomicity benefits, <code>WriteBatch</code> may also be used to
+speed up bulk updates by placing lots of individual mutations into the
+same batch.
+
+<h1>Synchronous Writes</h1>
+By default, each write to <code>leveldb</code> is asynchronous: it
+returns after pushing the write from the process into the operating
+system.  The transfer from operating system memory to the underlying
+persistent storage happens asynchronously.  The <code>sync</code> flag
+can be turned on for a particular write to make the write operation
+not return until the data being written has been pushed all the way to
+persistent storage.  (On Posix systems, this is implemented by calling
+either <code>fsync(...)</code> or <code>fdatasync(...)</code> or
+<code>msync(..., MS_SYNC)</code> before the write operation returns.)
+<pre>
+  leveldb::WriteOptions write_options;
+  write_options.sync = true;
+  db-&gt;Put(write_options, ...);
+</pre>
+Asynchronous writes are often more than a thousand times as fast as
+synchronous writes.  The downside of asynchronous writes is that a
+crash of the machine may cause the last few updates to be lost.  Note
+that a crash of just the writing process (i.e., not a reboot) will not
+cause any loss since even when <code>sync</code> is false, an update
+is pushed from the process memory into the operating system before it
+is considered done.
+
+<p>
+Asynchronous writes can often be used safely.  For example, when
+loading a large amount of data into the database you can handle lost
+updates by restarting the bulk load after a crash.  A hybrid scheme is
+also possible where every Nth write is synchronous, and in the event
+of a crash, the bulk load is restarted just after the last synchronous
+write finished by the previous run.  (The synchronous write can update
+a marker that describes where to restart on a crash.)
+
+<p>
+<code>WriteBatch</code> provides an alternative to asynchronous writes.
+Multiple updates may be placed in the same <code>WriteBatch</code> and
+applied together using a synchronous write (i.e.,
+<code>write_options.sync</code> is set to true).  The extra cost of
+the synchronous write will be amortized across all of the writes in
+the batch.
+
+<p>
+<h1>Concurrency</h1>
+<p>
+A database may only be opened by one process at a time.
+The <code>leveldb</code> implementation acquires a lock from the
+operating system to prevent misuse.  Within a single process, the
+same <code>leveldb::DB</code> object may be safely shared by multiple
+concurrent threads.  I.e., different threads may write into or fetch
+iterators or call <code>Get</code> on the same database without any
+external synchronization (the leveldb implementation will
+automatically do the required synchronization).  However other objects
+(like Iterator and WriteBatch) may require external synchronization.
+If two threads share such an object, they must protect access to it
+using their own locking protocol.  More details are available in
+the public header files.
+<p>
+<h1>Iteration</h1>
+<p>
+The following example demonstrates how to print all key,value pairs
+in a database.
+<p>
+<pre>
+  leveldb::Iterator* it = db-&gt;NewIterator(leveldb::ReadOptions());
+  for (it-&gt;SeekToFirst(); it-&gt;Valid(); it-&gt;Next()) {
+    cout &lt;&lt; it-&gt;key().ToString() &lt;&lt; ": "  &lt;&lt; it-&gt;value().ToString() &lt;&lt; endl;
+  }
+  assert(it-&gt;status().ok());  // Check for any errors found during the scan
+  delete it;
+</pre>
+The following variation shows how to process just the keys in the
+range <code>[start,limit)</code>:
+<p>
+<pre>
+  for (it-&gt;Seek(start);
+       it-&gt;Valid() &amp;&amp; it-&gt;key().ToString() &lt; limit;
+       it-&gt;Next()) {
+    ...
+  }
+</pre>
+You can also process entries in reverse order.  (Caveat: reverse
+iteration may be somewhat slower than forward iteration.)
+<p>
+<pre>
+  for (it-&gt;SeekToLast(); it-&gt;Valid(); it-&gt;Prev()) {
+    ...
+  }
+</pre>
+<h1>Snapshots</h1>
+<p>
+Snapshots provide consistent read-only views over the entire state of
+the key-value store.  <code>ReadOptions::snapshot</code> may be non-NULL to indicate
+that a read should operate on a particular version of the DB state.
+If <code>ReadOptions::snapshot</code> is NULL, the read will operate on an
+implicit snapshot of the current state.
+<p>
+Snapshots are created by the DB::GetSnapshot() method:
+<p>
+<pre>
+  leveldb::ReadOptions options;
+  options.snapshot = db-&gt;GetSnapshot();
+  ... apply some updates to db ...
+  leveldb::Iterator* iter = db-&gt;NewIterator(options);
+  ... read using iter to view the state when the snapshot was created ...
+  delete iter;
+  db-&gt;ReleaseSnapshot(options.snapshot);
+</pre>
+Note that when a snapshot is no longer needed, it should be released
+using the DB::ReleaseSnapshot interface.  This allows the
+implementation to get rid of state that was being maintained just to
+support reading as of that snapshot.
+<h1>Slice</h1>
+<p>
+The return value of the <code>it->key()</code> and <code>it->value()</code> calls above
+are instances of the <code>leveldb::Slice</code> type.  <code>Slice</code> is a simple
+structure that contains a length and a pointer to an external byte
+array.  Returning a <code>Slice</code> is a cheaper alternative to returning a
+<code>std::string</code> since we do not need to copy potentially large keys and
+values.  In addition, <code>leveldb</code> methods do not return null-terminated
+C-style strings since <code>leveldb</code> keys and values are allowed to
+contain '\0' bytes.
+<p>
+C++ strings and null-terminated C-style strings can be easily converted
+to a Slice:
+<p>
+<pre>
+   leveldb::Slice s1 = "hello";
+
+   std::string str("world");
+   leveldb::Slice s2 = str;
+</pre>
+A Slice can be easily converted back to a C++ string:
+<pre>
+   std::string str = s1.ToString();
+   assert(str == std::string("hello"));
+</pre>
+Be careful when using Slices since it is up to the caller to ensure that
+the external byte array into which the Slice points remains live while
+the Slice is in use.  For example, the following is buggy:
+<p>
+<pre>
+   leveldb::Slice slice;
+   if (...) {
+     std::string str = ...;
+     slice = str;
+   }
+   Use(slice);
+</pre>
+When the <code>if</code> statement goes out of scope, <code>str</code> will be destroyed and the
+backing storage for <code>slice</code> will disappear.
+<p>
+<h1>Comparators</h1>
+<p>
+The preceding examples used the default ordering function for key,
+which orders bytes lexicographically.  You can however supply a custom
+comparator when opening a database.  For example, suppose each
+database key consists of two numbers and we should sort by the first
+number, breaking ties by the second number.  First, define a proper
+subclass of <code>leveldb::Comparator</code> that expresses these rules:
+<p>
+<pre>
+  class TwoPartComparator : public leveldb::Comparator {
+   public:
+    // Three-way comparison function:
+    //   if a &lt; b: negative result
+    //   if a &gt; b: positive result
+    //   else: zero result
+    int Compare(const leveldb::Slice&amp; a, const leveldb::Slice&amp; b) const {
+      int a1, a2, b1, b2;
+      ParseKey(a, &amp;a1, &amp;a2);
+      ParseKey(b, &amp;b1, &amp;b2);
+      if (a1 &lt; b1) return -1;
+      if (a1 &gt; b1) return +1;
+      if (a2 &lt; b2) return -1;
+      if (a2 &gt; b2) return +1;
+      return 0;
+    }
+
+    // Ignore the following methods for now:
+    const char* Name() const { return "TwoPartComparator"; }
+    void FindShortestSeparator(std::string*, const leveldb::Slice&amp;) const { }
+    void FindShortSuccessor(std::string*) const { }
+  };
+</pre>
+Now create a database using this custom comparator:
+<p>
+<pre>
+  TwoPartComparator cmp;
+  leveldb::DB* db;
+  leveldb::Options options;
+  options.create_if_missing = true;
+  options.comparator = &amp;cmp;
+  leveldb::Status status = leveldb::DB::Open(options, "/tmp/testdb", &amp;db);
+  ...
+</pre>
+<h2>Backwards compatibility</h2>
+<p>
+The result of the comparator's <code>Name</code> method is attached to the
+database when it is created, and is checked on every subsequent
+database open.  If the name changes, the <code>leveldb::DB::Open</code> call will
+fail.  Therefore, change the name if and only if the new key format
+and comparison function are incompatible with existing databases, and
+it is ok to discard the contents of all existing databases.
+<p>
+You can however still gradually evolve your key format over time with
+a little bit of pre-planning.  For example, you could store a version
+number at the end of each key (one byte should suffice for most uses).
+When you wish to switch to a new key format (e.g., adding an optional
+third part to the keys processed by <code>TwoPartComparator</code>),
+(a) keep the same comparator name (b) increment the version number
+for new keys (c) change the comparator function so it uses the
+version numbers found in the keys to decide how to interpret them.
+<p>
+<h1>Performance</h1>
+<p>
+Performance can be tuned by changing the default values of the
+types defined in <code>include/leveldb/options.h</code>.
+
+<p>
+<h2>Block size</h2>
+<p>
+<code>leveldb</code> groups adjacent keys together into the same block and such a
+block is the unit of transfer to and from persistent storage.  The
+default block size is approximately 4096 uncompressed bytes.
+Applications that mostly do bulk scans over the contents of the
+database may wish to increase this size.  Applications that do a lot
+of point reads of small values may wish to switch to a smaller block
+size if performance measurements indicate an improvement.  There isn't
+much benefit in using blocks smaller than one kilobyte, or larger than
+a few megabytes.  Also note that compression will be more effective
+with larger block sizes.
+<p>
+<h2>Compression</h2>
+<p>
+Each block is individually compressed before being written to
+persistent storage.  Compression is on by default since the default
+compression method is very fast, and is automatically disabled for
+uncompressible data.  In rare cases, applications may want to disable
+compression entirely, but should only do so if benchmarks show a
+performance improvement:
+<p>
+<pre>
+  leveldb::Options options;
+  options.compression = leveldb::kNoCompression;
+  ... leveldb::DB::Open(options, name, ...) ....
+</pre>
+<h2>Cache</h2>
+<p>
+The contents of the database are stored in a set of files in the
+filesystem and each file stores a sequence of compressed blocks.  If
+<code>options.cache</code> is non-NULL, it is used to cache frequently used
+uncompressed block contents.
+<p>
+<pre>
+  #include "leveldb/cache.h"
+
+  leveldb::Options options;
+  options.cache = leveldb::NewLRUCache(100 * 1048576);  // 100MB cache
+  leveldb::DB* db;
+  leveldb::DB::Open(options, name, &db);
+  ... use the db ...
+  delete db
+  delete options.cache;
+</pre>
+Note that the cache holds uncompressed data, and therefore it should
+be sized according to application level data sizes, without any
+reduction from compression.  (Caching of compressed blocks is left to
+the operating system buffer cache, or any custom <code>Env</code>
+implementation provided by the client.)
+<p>
+When performing a bulk read, the application may wish to disable
+caching so that the data processed by the bulk read does not end up
+displacing most of the cached contents.  A per-iterator option can be
+used to achieve this:
+<p>
+<pre>
+  leveldb::ReadOptions options;
+  options.fill_cache = false;
+  leveldb::Iterator* it = db-&gt;NewIterator(options);
+  for (it-&gt;SeekToFirst(); it-&gt;Valid(); it-&gt;Next()) {
+    ...
+  }
+</pre>
+<h2>Key Layout</h2>
+<p>
+Note that the unit of disk transfer and caching is a block.  Adjacent
+keys (according to the database sort order) will usually be placed in
+the same block.  Therefore the application can improve its performance
+by placing keys that are accessed together near each other and placing
+infrequently used keys in a separate region of the key space.
+<p>
+For example, suppose we are implementing a simple file system on top
+of <code>leveldb</code>.  The types of entries we might wish to store are:
+<p>
+<pre>
+   filename -&gt; permission-bits, length, list of file_block_ids
+   file_block_id -&gt; data
+</pre>
+We might want to prefix <code>filename</code> keys with one letter (say '/') and the
+<code>file_block_id</code> keys with a different letter (say '0') so that scans
+over just the metadata do not force us to fetch and cache bulky file
+contents.
+<p>
+<h2>Filters</h2>
+<p>
+Because of the way <code>leveldb</code> data is organized on disk,
+a single <code>Get()</code> call may involve multiple reads from disk.
+The optional <code>FilterPolicy</code> mechanism can be used to reduce
+the number of disk reads substantially.
+<pre>
+   leveldb::Options options;
+   options.filter_policy = NewBloomFilterPolicy(10);
+   leveldb::DB* db;
+   leveldb::DB::Open(options, "/tmp/testdb", &amp;db);
+   ... use the database ...
+   delete db;
+   delete options.filter_policy;
+</pre>
+The preceding code associates a
+<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Bloom_filter">Bloom filter</a>
+based filtering policy with the database.  Bloom filter based
+filtering relies on keeping some number of bits of data in memory per
+key (in this case 10 bits per key since that is the argument we passed
+to NewBloomFilterPolicy).  This filter will reduce the number of unnecessary
+disk reads needed for <code>Get()</code> calls by a factor of
+approximately a 100.  Increasing the bits per key will lead to a
+larger reduction at the cost of more memory usage.  We recommend that
+applications whose working set does not fit in memory and that do a
+lot of random reads set a filter policy.
+<p>
+If you are using a custom comparator, you should ensure that the filter
+policy you are using is compatible with your comparator.  For example,
+consider a comparator that ignores trailing spaces when comparing keys.
+<code>NewBloomFilterPolicy</code> must not be used with such a comparator.
+Instead, the application should provide a custom filter policy that
+also ignores trailing spaces.  For example:
+<pre>
+  class CustomFilterPolicy : public leveldb::FilterPolicy {
+   private:
+    FilterPolicy* builtin_policy_;
+   public:
+    CustomFilterPolicy() : builtin_policy_(NewBloomFilterPolicy(10)) { }
+    ~CustomFilterPolicy() { delete builtin_policy_; }
+
+    const char* Name() const { return "IgnoreTrailingSpacesFilter"; }
+
+    void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+      // Use builtin bloom filter code after removing trailing spaces
+      std::vector&lt;Slice&gt; trimmed(n);
+      for (int i = 0; i &lt; n; i++) {
+        trimmed[i] = RemoveTrailingSpaces(keys[i]);
+      }
+      return builtin_policy_-&gt;CreateFilter(&amp;trimmed[i], n, dst);
+    }
+
+    bool KeyMayMatch(const Slice& key, const Slice& filter) const {
+      // Use builtin bloom filter code after removing trailing spaces
+      return builtin_policy_-&gt;KeyMayMatch(RemoveTrailingSpaces(key), filter);
+    }
+  };
+</pre>
+<p>
+Advanced applications may provide a filter policy that does not use
+a bloom filter but uses some other mechanism for summarizing a set
+of keys.  See <code>leveldb/filter_policy.h</code> for detail.
+<p>
+<h1>Checksums</h1>
+<p>
+<code>leveldb</code> associates checksums with all data it stores in the file system.
+There are two separate controls provided over how aggressively these
+checksums are verified:
+<p>
+<ul>
+<li> <code>ReadOptions::verify_checksums</code> may be set to true to force
+  checksum verification of all data that is read from the file system on
+  behalf of a particular read.  By default, no such verification is
+  done.
+<p>
+<li> <code>Options::paranoid_checks</code> may be set to true before opening a
+  database to make the database implementation raise an error as soon as
+  it detects an internal corruption.  Depending on which portion of the
+  database has been corrupted, the error may be raised when the database
+  is opened, or later by another database operation.  By default,
+  paranoid checking is off so that the database can be used even if
+  parts of its persistent storage have been corrupted.
+<p>
+  If a database is corrupted (perhaps it cannot be opened when
+  paranoid checking is turned on), the <code>leveldb::RepairDB</code> function
+  may be used to recover as much of the data as possible
+<p>
+</ul>
+<h1>Approximate Sizes</h1>
+<p>
+The <code>GetApproximateSizes</code> method can used to get the approximate
+number of bytes of file system space used by one or more key ranges.
+<p>
+<pre>
+   leveldb::Range ranges[2];
+   ranges[0] = leveldb::Range("a", "c");
+   ranges[1] = leveldb::Range("x", "z");
+   uint64_t sizes[2];
+   leveldb::Status s = db-&gt;GetApproximateSizes(ranges, 2, sizes);
+</pre>
+The preceding call will set <code>sizes[0]</code> to the approximate number of
+bytes of file system space used by the key range <code>[a..c)</code> and
+<code>sizes[1]</code> to the approximate number of bytes used by the key range
+<code>[x..z)</code>.
+<p>
+<h1>Environment</h1>
+<p>
+All file operations (and other operating system calls) issued by the
+<code>leveldb</code> implementation are routed through a <code>leveldb::Env</code> object.
+Sophisticated clients may wish to provide their own <code>Env</code>
+implementation to get better control.  For example, an application may
+introduce artificial delays in the file IO paths to limit the impact
+of <code>leveldb</code> on other activities in the system.
+<p>
+<pre>
+  class SlowEnv : public leveldb::Env {
+    .. implementation of the Env interface ...
+  };
+
+  SlowEnv env;
+  leveldb::Options options;
+  options.env = &amp;env;
+  Status s = leveldb::DB::Open(options, ...);
+</pre>
+<h1>Porting</h1>
+<p>
+<code>leveldb</code> may be ported to a new platform by providing platform
+specific implementations of the types/methods/functions exported by
+<code>leveldb/port/port.h</code>.  See <code>leveldb/port/port_example.h</code> for more
+details.
+<p>
+In addition, the new platform may need a new default <code>leveldb::Env</code>
+implementation.  See <code>leveldb/util/env_posix.h</code> for an example.
+
+<h1>Other Information</h1>
+
+<p>
+Details about the <code>leveldb</code> implementation may be found in
+the following documents:
+<ul>
+<li> <a href="impl.html">Implementation notes</a>
+<li> <a href="table_format.txt">Format of an immutable Table file</a>
+<li> <a href="log_format.txt">Format of a log file</a>
+</ul>
+
+</body>
+</html>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/doc/index/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/doc/doc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        body {
+  margin-left: 0.5in;
+  margin-right: 0.5in;
+  background: white;
+  color: black;
+}
+
+h1 {
+  margin-left: -0.2in;
+  font-size: 14pt;
+}
+h2 {
+  margin-left: -0in;
+  font-size: 12pt;
+}
+h3 {
+  margin-left: -0in;
+}
+h4 {
+  margin-left: -0in;
+}
+hr {
+  margin-left: -0in;
+}
+
+/* Definition lists: definition term bold */
+dt {
+  font-weight: bold;
+}
+
+address {
+  text-align: center;
+}
+code,samp,var {
+  color: blue;
+}
+kbd {
+  color: #600000;
+}
+div.note p {
+  float: right;
+  width: 3in;
+  margin-right: 0%;
+  padding: 1px;
+  border: 2px solid #6060a0;
+  background-color: #fffff0;
+}
+
+ul {
+  margin-top: -0em;
+  margin-bottom: -0em;
+}
+
+ol {
+  margin-top: -0em;
+  margin-bottom: -0em;
+}
+
+UL.nobullets {
+  list-style-type: none;
+  list-style-image: none;
+  margin-left: -1em;
+}
+
+p {
+  margin: 1em 0 1em 0;
+  padding: 0 0 0 0;
+}
+
+pre {
+  line-height: 1.3em;
+  padding: 0.4em 0 0.8em 0;
+  margin:  0 0 0 0;
+  border:  0 0 0 0;
+  color: blue;
+}
+
+.datatable {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  border: 1px solid;
+}
+
+.datatable td,th {
+  padding: 0 0.5em 0 0.5em;
+  text-align: right;
+}
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/doc/doc/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/doc/benchmark" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!DOCTYPE html>
+<html>
+<head>
+<title>LevelDB Benchmarks</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+body {
+  font-family:Helvetica,sans-serif;
+  padding:20px;
+}
+
+h2 {
+  padding-top:30px;
+}
+
+table.bn {
+  width:800px;
+  border-collapse:collapse;
+  border:0;
+  padding:0;
+}
+
+table.bnbase {
+  width:650px;
+}
+
+table.bn td {
+  padding:2px 0;
+}
+
+table.bn td.c1 {
+  font-weight:bold;
+  width:150px;
+}
+
+table.bn td.c1 div.e {
+  float:right;
+  font-weight:normal;
+}
+
+table.bn td.c2 {
+  width:150px;
+  text-align:right;
+  padding:2px;
+}
+
+table.bn td.c3 {
+  width:350px;
+}
+
+table.bn td.c4 {
+  width:150px;
+  font-size:small;
+  padding-left:4px;
+}
+
+/* chart bars */
+div.bldb {
+  background-color:#0255df;
+}
+
+div.bkct {
+  background-color:#df5555;
+}
+
+div.bsql {
+  background-color:#aadf55;
+}
+
+.code {
+  font-family:monospace;
+  font-size:large;
+}
+
+.todo {
+  color: red;
+}
+
+</style>
+</head>
+<body>
+<h1>LevelDB Benchmarks</h1>
+<p>Google, July 2011</p>
+<hr>
+
+<p>In order to test LevelDB's performance, we benchmark it against other well-established database implementations. We compare LevelDB (revision 39) against <a target="_blank" rel="noopener" href="http://www.sqlite.org/">SQLite3</a> (version 3.7.6.3) and <a target="_blank" rel="noopener" href="http://fallabs.com/kyotocabinet/spex.html">Kyoto Cabinet's</a> (version 1.2.67) TreeDB (a B+Tree based key-value store). We would like to acknowledge Scott Hess and Mikio Hirabayashi for their suggestions and contributions to the SQLite3 and Kyoto Cabinet benchmarks, respectively.</p>
+
+<p>Benchmarks were all performed on a six-core Intel(R) Xeon(R) CPU X5650 @ 2.67GHz, with 12288 KB of total L3 cache and 12 GB of DDR3 RAM at 1333 MHz. (Note that LevelDB uses at most two CPUs since the benchmarks are single threaded: one to run the benchmark, and one for background compactions.) We ran the benchmarks on two machines (with identical processors), one with an Ext3 file system and one with an Ext4 file system. The machine with the Ext3 file system has a SATA Hitachi HDS721050CLA362 hard drive. The machine with the Ext4 file system has a SATA Samsung HD502HJ hard drive. Both hard drives spin at 7200 RPM and have hard drive write-caching enabled (using `hdparm -W 1 [device]`). The numbers reported below are the median of three measurements.</p>
+
+<h4>Benchmark Source Code</h4>
+<p>We wrote benchmark tools for SQLite and Kyoto TreeDB based on LevelDB's <span class="code">db_bench</span>. The code for each of the benchmarks resides here:</p>
+<ul>
+	<li> <b>LevelDB:</b> <a target="_blank" rel="noopener" href="http://code.google.com/p/leveldb/source/browse/trunk/db/db_bench.cc">db/db_bench.cc</a>.</li>
+	<li> <b>SQLite:</b> <a target="_blank" rel="noopener" href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_sqlite3.cc">doc/bench/db_bench_sqlite3.cc</a>.</li>
+	<li> <b>Kyoto TreeDB:</b> <a target="_blank" rel="noopener" href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_tree_db.cc">doc/bench/db_bench_tree_db.cc</a>.</li>
+</ul>
+
+<h4>Custom Build Specifications</h4>
+<ul>
+<li>LevelDB: LevelDB was compiled with the <a target="_blank" rel="noopener" href="http://code.google.com/p/google-perftools">tcmalloc</a> library and the <a target="_blank" rel="noopener" href="http://code.google.com/p/snappy/">Snappy</a> compression library (revision 33).  Assertions were disabled.</li>
+<li>TreeDB: TreeDB was compiled using the <a target="_blank" rel="noopener" href="http://www.oberhumer.com/opensource/lzo/">LZO</a> compression library (version 2.03). Furthermore, we enabled the TSMALL and TLINEAR options when opening the database in order to reduce the footprint of each record.</li>
+<li>SQLite: We tuned SQLite's performance, by setting its locking mode to exclusive.  We also enabled SQLite's <a target="_blank" rel="noopener" href="http://www.sqlite.org/draft/wal.html">write-ahead logging</a>.</li>
+</ul>
+
+<h2>1. Baseline Performance</h2>
+<p>This section gives the baseline performance of all the
+databases.  Following sections show how performance changes as various
+parameters are varied.  For the baseline:</p>
+<ul>
+	<li> Each database is allowed 4 MB of cache memory.</li>
+        <li> Databases are opened in <em>asynchronous</em> write mode.
+             (LevelDB's sync option, TreeDB's OAUTOSYNC option, and
+             SQLite3's synchronous options are all turned off).  I.e.,
+             every write is pushed to the operating system, but the
+             benchmark does not wait for the write to reach the disk.</li>
+	<li> Keys are 16 bytes each.</li>
+        <li> Value are 100 bytes each (with enough redundancy so that
+             a simple compressor shrinks them to 50% of their original
+             size).</li>
+	<li> Sequential reads/writes traverse the key space in increasing order.</li>
+	<li> Random reads/writes traverse the key space in random order.</li>
+</ul>
+
+<h3>A. Sequential Reads</h3>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">4,030,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">1,010,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:95px">&nbsp;</div></td>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">383,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:33px">&nbsp;</div></td>
+</table>
+<h3>B. Random Reads</h3>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">129,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:298px">&nbsp;</div></td>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">151,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">134,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:310px">&nbsp;</div></td>
+</table>
+<h3>C. Sequential Writes</h3>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">779,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">342,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:154px">&nbsp;</div></td>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">48,600 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
+</table>
+<h3>D. Random Writes</h3>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">164,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">88,500 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:188px">&nbsp;</div></td>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">9,860 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
+</table>
+
+<p>LevelDB outperforms both SQLite3 and TreeDB in sequential and random write operations and sequential read operations. Kyoto Cabinet has the fastest random read operations.</p>
+
+<h2>2. Write Performance under Different Configurations</h2>
+<h3>A. Large Values </h3>
+<p>For this benchmark, we start with an empty database, and write 100,000 byte values (~50% compressible). To keep the benchmark running time reasonable, we stop after writing 1000 values.</p>
+<h4>Sequential Writes</h4>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">1,100 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:234px">&nbsp;</div></td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">1,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:224px">&nbsp;</div></td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">1,600 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td></tr>
+</table>
+<h4>Random Writes</h4>
+<table class="bn bnbase">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">480 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:105px">&nbsp;</div></td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">1,100 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:240px">&nbsp;</div></td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">1,600 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td></tr>
+</table>
+<p>LevelDB doesn't perform as well with large values of 100,000 bytes each. This is because LevelDB writes keys and values at least twice: first time to the transaction log, and second time (during a compaction) to a sorted file.
+With larger values, LevelDB's per-operation efficiency is swamped by the
+cost of extra copies of large values.</p>
+<h3>B. Batch Writes</h3>
+<p>A batch write is a set of writes that are applied atomically to the underlying database. A single batch of N writes may be significantly faster than N individual writes. The following benchmark writes one thousand batches where each batch contains one thousand 100-byte values. TreeDB does not support batch writes and is omitted from this benchmark.</p>
+<h4>Sequential Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">840,000 entries/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.08x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">124,000 entries/sec</td>
+    <td class="c3"><div class="bsql" style="width:52px">&nbsp;</div></td>
+    <td class="c4">(2.55x baseline)</td></tr>
+</table>
+<h4>Random Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">221,000 entries/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.35x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">22,000 entries/sec</td>
+    <td class="c3"><div class="bsql" style="width:34px">&nbsp;</div></td>
+    <td class="c4">(2.23x baseline)</td></tr>
+</table>
+
+<p>Because of the way LevelDB persistent storage is organized, batches of
+random writes are not much slower (only a factor of 4x) than batches
+of sequential writes.</p>
+
+<h3>C. Synchronous Writes</h3>
+<p>In the following benchmark, we enable the synchronous writing modes
+of all of the databases.  Since this change significantly slows down the
+benchmark, we stop after 10,000 writes. For synchronous write tests, we've
+disabled hard drive write-caching (using `hdparm -W 0 [device]`).</p>
+<ul>
+    <li>For LevelDB, we set WriteOptions.sync = true.</li>
+    <li>In TreeDB, we enabled TreeDB's OAUTOSYNC option.</li>
+    <li>For SQLite3, we set "PRAGMA synchronous = FULL".</li>
+</ul>
+<h4>Sequential Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">100 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(0.003x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">7 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:27px">&nbsp;</div></td>
+    <td class="c4">(0.0004x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">88 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:315px">&nbsp;</div></td>
+    <td class="c4">(0.002x baseline)</td></tr>
+</table>
+<h4>Random Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">100 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(0.015x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">8 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:29px">&nbsp;</div></td>
+    <td class="c4">(0.001x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">88 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:314px">&nbsp;</div></td>
+    <td class="c4">(0.009x baseline)</td></tr>
+</table>
+
+<p>Also see the <code>ext4</code> performance numbers below
+since synchronous writes behave significantly differently
+on <code>ext3</code> and <code>ext4</code>.</p>
+
+<h3>D. Turning Compression Off</h3>
+
+<p>In the baseline measurements, LevelDB and TreeDB were using
+light-weight compression
+(<a target="_blank" rel="noopener" href="http://code.google.com/p/snappy/">Snappy</a> for LevelDB,
+and <a target="_blank" rel="noopener" href="http://www.oberhumer.com/opensource/lzo/">LZO</a> for
+TreeDB). SQLite3, by default does not use compression.  The
+experiments below show what happens when compression is disabled in
+all of the databases (the SQLite3 numbers are just a copy of
+its baseline measurements):</p>
+
+<h4>Sequential Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">594,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(0.76x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">485,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:239px">&nbsp;</div></td>
+    <td class="c4">(1.42x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">48,600 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:29px">&nbsp;</div></td>
+    <td class="c4">(1.00x baseline)</td></tr>
+</table>
+<h4>Random Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">135,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:296px">&nbsp;</div></td>
+    <td class="c4">(0.82x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">159,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.80x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">9,860 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
+    <td class="c4">(1.00x baseline)</td></tr>
+</table>
+
+<p>LevelDB's write performance is better with compression than without
+since compression decreases the amount of data that has to be written
+to disk.  Therefore LevelDB users can leave compression enabled in
+most scenarios without having worry about a tradeoff between space
+usage and performance.  TreeDB's performance on the other hand is
+better without compression than with compression.  Presumably this is
+because TreeDB's compression library (LZO) is more expensive than
+LevelDB's compression library (Snappy).<p>
+
+<h3>E. Using More Memory</h3>
+<p>We increased the overall cache size for each database to 128 MB. For LevelDB, we partitioned 128 MB into a 120 MB write buffer and 8 MB of cache (up from 2 MB of write buffer and 2 MB of cache). For SQLite3, we kept the page size at 1024 bytes, but increased the number of pages to 131,072 (up from 4096). For TreeDB, we also kept the page size at 1024 bytes, but increased the cache size to 128 MB (up from 4 MB).</p>
+<h4>Sequential Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">812,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.04x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">321,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:138px">&nbsp;</div></td>
+    <td class="c4">(0.94x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">48,500 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
+    <td class="c4">(1.00x baseline)</td></tr>
+</table>
+<h4>Random Writes</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">355,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(2.16x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">284,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:280px">&nbsp;</div></td>
+    <td class="c4">(3.21x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">9,670 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:10px">&nbsp;</div></td>
+    <td class="c4">(0.98x baseline)</td></tr>
+</table>
+
+<p>SQLite's performance does not change substantially when compared to
+the baseline, but the random write performance for both LevelDB and
+TreeDB increases significantly.  LevelDB's performance improves
+because a larger write buffer reduces the need to merge sorted files
+(since it creates a smaller number of larger sorted files).  TreeDB's
+performance goes up because the entire database is available in memory
+for fast in-place updates.</p>
+
+  <h2>3. Read Performance under Different Configurations</h2>
+<h3>A. Larger Caches</h3>
+<p>We increased the overall memory usage to 128 MB for each database.
+For LevelDB, we allocated 8 MB to LevelDB's write buffer and 120 MB
+to LevelDB's cache. The other databases don't differentiate between a
+write buffer and a cache, so we simply set their cache size to 128
+MB.</p>
+<h4>Sequential Reads</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">5,210,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.29x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">1,070,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:72px">&nbsp;</div></td>
+    <td class="c4">(1.06x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">609,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:41px">&nbsp;</div></td>
+    <td class="c4">(1.59x baseline)</td></tr>
+</table>
+
+<h4>Random Reads</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">190,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:144px">&nbsp;</div></td>
+    <td class="c4">(1.47x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">463,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(3.07x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">186,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:141px">&nbsp;</div></td>
+    <td class="c4">(1.39x baseline)</td></tr>
+</table>
+
+<p>As expected, the read performance of all of the databases increases
+when the caches are enlarged.  In particular, TreeDB seems to make
+very effective use of a cache that is large enough to hold the entire
+database.</p>
+
+<h3>B. No Compression Reads </h3>
+<p>For this benchmark, we populated a database with 1 million entries consisting of 16 byte keys and 100 byte values. We compiled LevelDB and Kyoto Cabinet without compression support, so results that are read out from the database are already uncompressed. We've listed the SQLite3 baseline read performance as a point of comparison.</p>
+<h4>Sequential Reads</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">4,880,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.21x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">1,230,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:88px">&nbsp;</div></td>
+    <td class="c4">(3.60x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">383,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:27px">&nbsp;</div></td>
+    <td class="c4">(1.00x baseline)</td></tr>
+</table>
+<h4>Random Reads</h4>
+<table class="bn">
+<tr><td class="c1">LevelDB</td>
+    <td class="c2">149,000 ops/sec</td>
+    <td class="c3"><div class="bldb" style="width:300px">&nbsp;</div></td>
+    <td class="c4">(1.16x baseline)</td></tr>
+<tr><td class="c1">Kyoto TreeDB</td>
+    <td class="c2">175,000 ops/sec</td>
+    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+    <td class="c4">(1.16x baseline)</td></tr>
+<tr><td class="c1">SQLite3</td>
+    <td class="c2">134,000 ops/sec</td>
+    <td class="c3"><div class="bsql" style="width:268px">&nbsp;</div></td>
+    <td class="c4">(1.00x baseline)</td></tr>
+</table>
+
+<p>Performance of both LevelDB and TreeDB improves a small amount when
+compression is disabled.  Note however that under different workloads,
+performance may very well be better with compression if it allows more
+of the working set to fit in memory.</p>
+
+<h2>Note about Ext4 Filesystems</h2>
+<p>The preceding numbers are for an ext3 file system. Synchronous writes are much slower under <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Ext4">ext4</a> (LevelDB drops to ~31 writes / second and TreeDB drops to ~5 writes / second; SQLite3's synchronous writes do not noticeably drop) due to ext4's different handling of <span class="code">fsync</span> / <span class="code">msync</span> calls. Even LevelDB's asynchronous write performance drops somewhat since it spreads its storage across multiple files and issues <span class="code">fsync</span> calls when switching to a new file.</p>
+
+<h2>Acknowledgements</h2>
+<p>Jeff Dean and Sanjay Ghemawat wrote LevelDB. Kevin Tseng wrote and compiled these benchmarks. Mikio Hirabayashi, Scott Hess, and Gabor Cselle provided help and advice.</p>
+</body>
+</html>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/doc/benchmark/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/WINDOWS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Building-LevelDB-On-Windows"><a href="#Building-LevelDB-On-Windows" class="headerlink" title="Building LevelDB On Windows"></a>Building LevelDB On Windows</h1><h2 id="Prereqs"><a href="#Prereqs" class="headerlink" title="Prereqs"></a>Prereqs</h2><p>Install the <a target="_blank" rel="noopener" href="http://www.microsoft.com/downloads/dlx/en-us/listdetailsview.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b">Windows Software Development Kit version 7.1</a>.</p>
+<p>Download and extract the <a target="_blank" rel="noopener" href="http://snappy.googlecode.com/files/snappy-1.0.5.tar.gz">Snappy source distribution</a></p>
+<ol>
+<li>Open the “Windows SDK 7.1 Command Prompt” :<br>Start Menu -&gt; “Microsoft Windows SDK v7.1” &gt; “Windows SDK 7.1 Command Prompt”</li>
+<li>Change the directory to the leveldb project</li>
+</ol>
+<h2 id="Building-the-Static-lib"><a href="#Building-the-Static-lib" class="headerlink" title="Building the Static lib"></a>Building the Static lib</h2><ul>
+<li><p>32 bit Version </p>
+<pre><code>  setenv /x86
+  msbuild.exe /p:Configuration=Release /p:Platform=Win32 /p:Snappy=..\snappy-1.0.5
+</code></pre>
+</li>
+<li><p>64 bit Version </p>
+<pre><code>  setenv /x64
+  msbuild.exe /p:Configuration=Release /p:Platform=x64 /p:Snappy=..\snappy-1.0.5
+</code></pre>
+</li>
+</ul>
+<h2 id="Building-and-Running-the-Benchmark-app"><a href="#Building-and-Running-the-Benchmark-app" class="headerlink" title="Building and Running the Benchmark app"></a>Building and Running the Benchmark app</h2><ul>
+<li><p>32 bit Version </p>
+<pre><code>  setenv /x86
+  msbuild.exe /p:Configuration=Benchmark /p:Platform=Win32 /p:Snappy=..\snappy-1.0.5
+  Benchmark\leveldb.exe
+</code></pre>
+</li>
+<li><p>64 bit Version </p>
+<pre><code>  setenv /x64
+  msbuild.exe /p:Configuration=Benchmark /p:Platform=x64 /p:Snappy=..\snappy-1.0.5
+  x64\Benchmark\leveldb.exe
+</code></pre>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/WINDOWS/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/README" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values.</strong></p>
+<p>Authors: Sanjay Ghemawat (<a href="mailto:&#115;&#97;&#x6e;&#x6a;&#x61;&#x79;&#64;&#103;&#x6f;&#111;&#103;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#115;&#97;&#x6e;&#x6a;&#x61;&#x79;&#64;&#103;&#x6f;&#111;&#103;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a>) and Jeff Dean (<a href="mailto:&#106;&#x65;&#102;&#x66;&#x40;&#103;&#111;&#111;&#103;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#106;&#x65;&#102;&#x66;&#x40;&#103;&#111;&#111;&#103;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a>)</p>
+<h1 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h1><ul>
+<li>Keys and values are arbitrary byte arrays.</li>
+<li>Data is stored sorted by key.</li>
+<li>Callers can provide a custom comparison function to override the sort order.</li>
+<li>The basic operations are <code>Put(key,value)</code>, <code>Get(key)</code>, <code>Delete(key)</code>.</li>
+<li>Multiple changes can be made in one atomic batch.</li>
+<li>Users can create a transient snapshot to get a consistent view of data.</li>
+<li>Forward and backward iteration is supported over the data.</li>
+<li>Data is automatically compressed using the <a target="_blank" rel="noopener" href="http://code.google.com/p/snappy">Snappy compression library</a>.</li>
+<li>External activity (file system operations etc.) is relayed through a virtual interface so users can customize the operating system interactions.</li>
+<li><a target="_blank" rel="noopener" href="http://htmlpreview.github.io/?https://github.com/google/leveldb/blob/master/doc/index.html">Detailed documentation</a> about how to use the library is included with the source code.</li>
+</ul>
+<h1 id="Limitations"><a href="#Limitations" class="headerlink" title="Limitations"></a>Limitations</h1><ul>
+<li>This is not a SQL database.  It does not have a relational data model, it does not support SQL queries, and it has no support for indexes.</li>
+<li>Only a single process (possibly multi-threaded) can access a particular database at a time.</li>
+<li>There is no client-server support builtin to the library.  An application that needs such support will have to wrap their own server around the library.</li>
+</ul>
+<h1 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h1><p>Here is a performance report (with explanations) from the run of the<br>included db_bench program.  The results are somewhat noisy, but should<br>be enough to get a ballpark performance estimate.</p>
+<h2 id="Setup"><a href="#Setup" class="headerlink" title="Setup"></a>Setup</h2><p>We use a database with a million entries.  Each entry has a 16 byte<br>key, and a 100 byte value.  Values used by the benchmark compress to<br>about half their original size.</p>
+<pre><code>LevelDB:    version 1.1
+Date:       Sun May  1 12:11:26 2011
+CPU:        4 x Intel(R) Core(TM)2 Quad CPU    Q6600  @ 2.40GHz
+CPUCache:   4096 KB
+Keys:       16 bytes each
+Values:     100 bytes each (50 bytes after compression)
+Entries:    1000000
+Raw Size:   110.6 MB (estimated)
+File Size:  62.9 MB (estimated)
+</code></pre>
+<h2 id="Write-performance"><a href="#Write-performance" class="headerlink" title="Write performance"></a>Write performance</h2><p>The “fill” benchmarks create a brand new database, in either<br>sequential, or random order.  The “fillsync” benchmark flushes data<br>from the operating system to the disk after every operation; the other<br>write operations leave the data sitting in the operating system buffer<br>cache for a while.  The “overwrite” benchmark does random writes that<br>update existing keys in the database.</p>
+<pre><code>fillseq      :       1.765 micros/op;   62.7 MB/s
+fillsync     :     268.409 micros/op;    0.4 MB/s (10000 ops)
+fillrandom   :       2.460 micros/op;   45.0 MB/s
+overwrite    :       2.380 micros/op;   46.5 MB/s
+</code></pre>
+<p>Each “op” above corresponds to a write of a single key/value pair.<br>I.e., a random write benchmark goes at approximately 400,000 writes per second.</p>
+<p>Each “fillsync” operation costs much less (0.3 millisecond)<br>than a disk seek (typically 10 milliseconds).  We suspect that this is<br>because the hard disk itself is buffering the update in its memory and<br>responding before the data has been written to the platter.  This may<br>or may not be safe based on whether or not the hard disk has enough<br>power to save its memory in the event of a power failure.</p>
+<h2 id="Read-performance"><a href="#Read-performance" class="headerlink" title="Read performance"></a>Read performance</h2><p>We list the performance of reading sequentially in both the forward<br>and reverse direction, and also the performance of a random lookup.<br>Note that the database created by the benchmark is quite small.<br>Therefore the report characterizes the performance of leveldb when the<br>working set fits in memory.  The cost of reading a piece of data that<br>is not present in the operating system buffer cache will be dominated<br>by the one or two disk seeks needed to fetch the data from disk.<br>Write performance will be mostly unaffected by whether or not the<br>working set fits in memory.</p>
+<pre><code>readrandom   :      16.677 micros/op;  (approximately 60,000 reads per second)
+readseq      :       0.476 micros/op;  232.3 MB/s
+readreverse  :       0.724 micros/op;  152.9 MB/s
+</code></pre>
+<p>LevelDB compacts its underlying storage data in the background to<br>improve read performance.  The results listed above were done<br>immediately after a lot of random writes.  The results after<br>compactions (which are usually triggered automatically) are better.</p>
+<pre><code>readrandom   :      11.602 micros/op;  (approximately 85,000 reads per second)
+readseq      :       0.423 micros/op;  261.8 MB/s
+readreverse  :       0.663 micros/op;  166.9 MB/s
+</code></pre>
+<p>Some of the high cost of reads comes from repeated decompression of blocks<br>read from disk.  If we supply enough cache to the leveldb so it can hold the<br>uncompressed blocks in memory, the read performance improves again:</p>
+<pre><code>readrandom   :       9.775 micros/op;  (approximately 100,000 reads per second before compaction)
+readrandom   :       5.215 micros/op;  (approximately 190,000 reads per second after compaction)
+</code></pre>
+<h2 id="Repository-contents"><a href="#Repository-contents" class="headerlink" title="Repository contents"></a>Repository contents</h2><p>See doc/index.html for more explanation. See doc/impl.html for a brief overview of the implementation.</p>
+<p>The public interface is in include/*.h.  Callers should not include or<br>rely on the details of any other header files in this package.  Those<br>internal APIs may be changed without warning.</p>
+<p>Guide to header files:</p>
+<ul>
+<li><p><strong>include/db.h</strong>: Main interface to the DB: Start here</p>
+</li>
+<li><p><strong>include/options.h</strong>: Control over the behavior of an entire database,<br>and also control over the behavior of individual reads and writes.</p>
+</li>
+<li><p><strong>include/comparator.h</strong>: Abstraction for user-specified comparison function.<br>If you want just bytewise comparison of keys, you can use the default<br>comparator, but clients can write their own comparator implementations if they<br>want custom ordering (e.g. to handle different character encodings, etc.)</p>
+</li>
+<li><p><strong>include/iterator.h</strong>: Interface for iterating over data. You can get<br>an iterator from a DB object.</p>
+</li>
+<li><p><strong>include/write_batch.h</strong>: Interface for atomically applying multiple<br>updates to a database.</p>
+</li>
+<li><p><strong>include/slice.h</strong>: A simple module for maintaining a pointer and a<br>length into some other byte array.</p>
+</li>
+<li><p><strong>include/status.h</strong>: Status is returned from many of the public interfaces<br>and is used to report success and various kinds of errors.</p>
+</li>
+<li><p><strong>include/env.h</strong>:<br>Abstraction of the OS environment.  A posix implementation of this interface is<br>in util/env_posix.cc</p>
+</li>
+<li><p><strong>include/table.h, include/table_builder.h</strong>: Lower-level modules that most<br>clients probably won’t use directly</p>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/README/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JoToChain/src/leveldb/CONTRIBUTING" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Contributing"><a href="#Contributing" class="headerlink" title="Contributing"></a>Contributing</h1><p>We’d love to accept your code patches! However, before we can take them, we<br>have to jump a couple of legal hurdles.</p>
+<h2 id="Contributor-License-Agreements"><a href="#Contributor-License-Agreements" class="headerlink" title="Contributor License Agreements"></a>Contributor License Agreements</h2><p>Please fill out either the individual or corporate Contributor License<br>Agreement as appropriate.</p>
+<ul>
+<li>If you are an individual writing original source code and you’re sure you<br>own the intellectual property, then sign an <a target="_blank" rel="noopener" href="https://developers.google.com/open-source/cla/individual">individual CLA</a>.</li>
+<li>If you work for a company that wants to allow you to contribute your work,<br>then sign a <a target="_blank" rel="noopener" href="https://developers.google.com/open-source/cla/corporate">corporate CLA</a>.</li>
+</ul>
+<p>Follow either of the two links above to access the appropriate CLA and<br>instructions for how to sign and return it.</p>
+<h2 id="Submitting-a-Patch"><a href="#Submitting-a-Patch" class="headerlink" title="Submitting a Patch"></a>Submitting a Patch</h2><ol>
+<li>Sign the contributors license agreement above.</li>
+<li>Decide which code you want to submit. A submission should be a set of changes<br>that addresses one issue in the <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/issues">issue tracker</a>.<br>Please don’t mix more than one logical change per submission, because it makes<br>the history hard to follow. If you want to make a change<br>(e.g. add a sample or feature) that doesn’t have a corresponding issue in the<br>issue tracker, please create one.</li>
+<li><strong>Submitting</strong>: When you are ready to submit, send us a Pull Request. Be<br>sure to include the issue number you fixed and the name you used to sign<br>the CLA.</li>
+</ol>
+<h2 id="Writing-Code"><a href="#Writing-Code" class="headerlink" title="Writing Code"></a>Writing Code</h2><p>If your contribution contains code, please make sure that it follows<br><a target="_blank" rel="noopener" href="http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml">the style guide</a>.<br>Otherwise we will have to ask you to make changes, and that’s no fun for anyone.</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/JoToChain/src/leveldb/CONTRIBUTING/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-new" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     

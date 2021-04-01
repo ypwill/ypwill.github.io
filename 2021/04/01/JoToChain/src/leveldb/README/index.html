@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | YPBlog</title>
+  <title>YPBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values. Authors: Sanjay Ghemawat (&amp;#115;&amp;#97;&amp;#x6e;&amp;#x6a;&amp;#x61;&amp;#x79;&amp;#64;&amp;#10">
+<meta property="og:type" content="article">
 <meta property="og:title" content="YPBlog">
-<meta property="og:url" content="http://example.com/archives/index.html">
+<meta property="og:url" content="http://example.com/2021/04/01/JoToChain/src/leveldb/README/index.html">
 <meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values. Authors: Sanjay Ghemawat (&amp;#115;&amp;#97;&amp;#x6e;&amp;#x6a;&amp;#x61;&amp;#x79;&amp;#64;&amp;#10">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-01T06:14:44.600Z">
+<meta property="article:modified_time" content="2021-04-01T06:14:44.600Z">
 <meta property="article:author" content="youpeng">
 <meta name="twitter:card" content="summary">
   
@@ -150,244 +154,225 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-JoToChain/src/leveldb/README" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values.</strong></p>
+<p>Authors: Sanjay Ghemawat (<a href="mailto:&#115;&#97;&#x6e;&#x6a;&#x61;&#x79;&#64;&#103;&#x6f;&#111;&#103;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#115;&#97;&#x6e;&#x6a;&#x61;&#x79;&#64;&#103;&#x6f;&#111;&#103;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a>) and Jeff Dean (<a href="mailto:&#106;&#x65;&#102;&#x66;&#x40;&#103;&#111;&#111;&#103;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#106;&#x65;&#102;&#x66;&#x40;&#103;&#111;&#111;&#103;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a>)</p>
+<h1 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h1><ul>
+<li>Keys and values are arbitrary byte arrays.</li>
+<li>Data is stored sorted by key.</li>
+<li>Callers can provide a custom comparison function to override the sort order.</li>
+<li>The basic operations are <code>Put(key,value)</code>, <code>Get(key)</code>, <code>Delete(key)</code>.</li>
+<li>Multiple changes can be made in one atomic batch.</li>
+<li>Users can create a transient snapshot to get a consistent view of data.</li>
+<li>Forward and backward iteration is supported over the data.</li>
+<li>Data is automatically compressed using the <a target="_blank" rel="noopener" href="http://code.google.com/p/snappy">Snappy compression library</a>.</li>
+<li>External activity (file system operations etc.) is relayed through a virtual interface so users can customize the operating system interactions.</li>
+<li><a target="_blank" rel="noopener" href="http://htmlpreview.github.io/?https://github.com/google/leveldb/blob/master/doc/index.html">Detailed documentation</a> about how to use the library is included with the source code.</li>
+</ul>
+<h1 id="Limitations"><a href="#Limitations" class="headerlink" title="Limitations"></a>Limitations</h1><ul>
+<li>This is not a SQL database.  It does not have a relational data model, it does not support SQL queries, and it has no support for indexes.</li>
+<li>Only a single process (possibly multi-threaded) can access a particular database at a time.</li>
+<li>There is no client-server support builtin to the library.  An application that needs such support will have to wrap their own server around the library.</li>
+</ul>
+<h1 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h1><p>Here is a performance report (with explanations) from the run of the<br>included db_bench program.  The results are somewhat noisy, but should<br>be enough to get a ballpark performance estimate.</p>
+<h2 id="Setup"><a href="#Setup" class="headerlink" title="Setup"></a>Setup</h2><p>We use a database with a million entries.  Each entry has a 16 byte<br>key, and a 100 byte value.  Values used by the benchmark compress to<br>about half their original size.</p>
+<pre><code>LevelDB:    version 1.1
+Date:       Sun May  1 12:11:26 2011
+CPU:        4 x Intel(R) Core(TM)2 Quad CPU    Q6600  @ 2.40GHz
+CPUCache:   4096 KB
+Keys:       16 bytes each
+Values:     100 bytes each (50 bytes after compression)
+Entries:    1000000
+Raw Size:   110.6 MB (estimated)
+File Size:  62.9 MB (estimated)
+</code></pre>
+<h2 id="Write-performance"><a href="#Write-performance" class="headerlink" title="Write performance"></a>Write performance</h2><p>The “fill” benchmarks create a brand new database, in either<br>sequential, or random order.  The “fillsync” benchmark flushes data<br>from the operating system to the disk after every operation; the other<br>write operations leave the data sitting in the operating system buffer<br>cache for a while.  The “overwrite” benchmark does random writes that<br>update existing keys in the database.</p>
+<pre><code>fillseq      :       1.765 micros/op;   62.7 MB/s
+fillsync     :     268.409 micros/op;    0.4 MB/s (10000 ops)
+fillrandom   :       2.460 micros/op;   45.0 MB/s
+overwrite    :       2.380 micros/op;   46.5 MB/s
+</code></pre>
+<p>Each “op” above corresponds to a write of a single key/value pair.<br>I.e., a random write benchmark goes at approximately 400,000 writes per second.</p>
+<p>Each “fillsync” operation costs much less (0.3 millisecond)<br>than a disk seek (typically 10 milliseconds).  We suspect that this is<br>because the hard disk itself is buffering the update in its memory and<br>responding before the data has been written to the platter.  This may<br>or may not be safe based on whether or not the hard disk has enough<br>power to save its memory in the event of a power failure.</p>
+<h2 id="Read-performance"><a href="#Read-performance" class="headerlink" title="Read performance"></a>Read performance</h2><p>We list the performance of reading sequentially in both the forward<br>and reverse direction, and also the performance of a random lookup.<br>Note that the database created by the benchmark is quite small.<br>Therefore the report characterizes the performance of leveldb when the<br>working set fits in memory.  The cost of reading a piece of data that<br>is not present in the operating system buffer cache will be dominated<br>by the one or two disk seeks needed to fetch the data from disk.<br>Write performance will be mostly unaffected by whether or not the<br>working set fits in memory.</p>
+<pre><code>readrandom   :      16.677 micros/op;  (approximately 60,000 reads per second)
+readseq      :       0.476 micros/op;  232.3 MB/s
+readreverse  :       0.724 micros/op;  152.9 MB/s
+</code></pre>
+<p>LevelDB compacts its underlying storage data in the background to<br>improve read performance.  The results listed above were done<br>immediately after a lot of random writes.  The results after<br>compactions (which are usually triggered automatically) are better.</p>
+<pre><code>readrandom   :      11.602 micros/op;  (approximately 85,000 reads per second)
+readseq      :       0.423 micros/op;  261.8 MB/s
+readreverse  :       0.663 micros/op;  166.9 MB/s
+</code></pre>
+<p>Some of the high cost of reads comes from repeated decompression of blocks<br>read from disk.  If we supply enough cache to the leveldb so it can hold the<br>uncompressed blocks in memory, the read performance improves again:</p>
+<pre><code>readrandom   :       9.775 micros/op;  (approximately 100,000 reads per second before compaction)
+readrandom   :       5.215 micros/op;  (approximately 190,000 reads per second after compaction)
+</code></pre>
+<h2 id="Repository-contents"><a href="#Repository-contents" class="headerlink" title="Repository contents"></a>Repository contents</h2><p>See doc/index.html for more explanation. See doc/impl.html for a brief overview of the implementation.</p>
+<p>The public interface is in include/*.h.  Callers should not include or<br>rely on the details of any other header files in this package.  Those<br>internal APIs may be changed without warning.</p>
+<p>Guide to header files:</p>
+<ul>
+<li><p><strong>include/db.h</strong>: Main interface to the DB: Start here</p>
+</li>
+<li><p><strong>include/options.h</strong>: Control over the behavior of an entire database,<br>and also control over the behavior of individual reads and writes.</p>
+</li>
+<li><p><strong>include/comparator.h</strong>: Abstraction for user-specified comparison function.<br>If you want just bytewise comparison of keys, you can use the default<br>comparator, but clients can write their own comparator implementations if they<br>want custom ordering (e.g. to handle different character encodings, etc.)</p>
+</li>
+<li><p><strong>include/iterator.h</strong>: Interface for iterating over data. You can get<br>an iterator from a DB object.</p>
+</li>
+<li><p><strong>include/write_batch.h</strong>: Interface for atomically applying multiple<br>updates to a database.</p>
+</li>
+<li><p><strong>include/slice.h</strong>: A simple module for maintaining a pointer and a<br>length into some other byte array.</p>
+</li>
+<li><p><strong>include/status.h</strong>: Status is returned from many of the public interfaces<br>and is used to report success and various kinds of errors.</p>
+</li>
+<li><p><strong>include/env.h</strong>:<br>Abstraction of the OS environment.  A posix implementation of this interface is<br>in util/env_posix.cc</p>
+</li>
+<li><p><strong>include/table.h, include/table_builder.h</strong>: Lower-level modules that most<br>clients probably won’t use directly</p>
+</li>
+</ul>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/doc/impl/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.621Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/04/01/JoToChain/src/leveldb/README/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/doc/index/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.621Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/doc/doc/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.620Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2021/04/01/JoToChain/src/leveldb/WINDOWS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/01/JoToChain/src/leveldb/CONTRIBUTING/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/doc/benchmark/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.620Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/WINDOWS/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.601Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/README/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.600Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoToChain/src/leveldb/CONTRIBUTING/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:14:44.598Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/new/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:11:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/01/new/">new</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoTochain%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2021-04-01T06:06:10.497Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/01/hello-world/" class="archive-article-date">
-  	<time datetime="2021-03-01T02:53:23.948Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-01</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/01/hello-world/">Hello World</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -410,8 +395,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
