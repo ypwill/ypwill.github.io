@@ -152,6 +152,82 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Jotochain安装部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: Jotochain安装部署</p>
+<p>1.安装git，并克隆文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装git</span></span><br><span class="line">apt install git</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看git版本</span></span><br><span class="line">git --version</span><br><span class="line"><span class="meta">#</span><span class="bash"> 克隆项目</span></span><br><span class="line">git clone https://gitlab.com/echoyang/JoToChain.git</span><br><span class="line"><span class="meta">#</span><span class="bash"> 切换分支</span></span><br><span class="line">git checkout tbac-wzh</span><br></pre></td></tr></table></figure>
+
+
+
+<p>2.下载依赖项</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install build-essential libtool autotools-dev automake pkg-config</span><br><span class="line">libssl-dev libevent-dev bsdmainutils</span><br><span class="line">sudo apt-get install libboost-all-dev</span><br></pre></td></tr></table></figure>
+
+
+
+<p>3.安装libdb库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">从服务器拉取libdb文件</span></span><br><span class="line">sudo scp -r root@101.200.183.1:/root/shareDir/*.deb .</span><br><span class="line"><span class="meta">#</span><span class="bash">安装deb(安装有顺序，自己试)</span></span><br><span class="line">sudo dpkg -i &lt;.deb file name&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>4.安装gcc5.5、g++5.5</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gcc-5</span><br><span class="line">sudo apt-get install g++-5</span><br><span class="line"><span class="meta">#</span><span class="bash">软连接</span></span><br><span class="line">sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 100</span><br><span class="line">sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 100</span><br><span class="line"><span class="meta">#</span><span class="bash">查看gcc、g++版本(应该为5.5)</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo gcc -v</span><br><span class="line">sudo g++ -v</span><br></pre></td></tr></table></figure>
+
+
+
+<p>5.安装boost</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">从服务器拉取boost1.65</span></span><br><span class="line">sudo scp -r root@101.200.183.1:/root/shareDir/boost_1_65_0.tar.gz .</span><br><span class="line"><span class="meta">#</span><span class="bash">解压boost_1_65_0.tar.gz</span></span><br><span class="line">sudo tar -zxvf boost_1_65_0.tar.gz</span><br><span class="line"><span class="meta">#</span><span class="bash">删除本机boost库包括  /usr/<span class="built_in">local</span>/include/boost; /usr/include/boost</span></span><br><span class="line">cd /usr/local/include/</span><br><span class="line">sudo rm -r boost</span><br><span class="line">cd /usr/include/</span><br><span class="line">sudo rm -r boost</span><br><span class="line"><span class="meta">#</span><span class="bash">进入安装目录</span></span><br><span class="line">cd boost_1_65_0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">开始编译</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">1: 设置参数</span></span><br><span class="line">   ./bootstrap.sh –prefix=/usr/local/boost</span><br><span class="line"><span class="meta">  #</span><span class="bash">2: 编译</span></span><br><span class="line">   ./b2 -j8</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">安装配置</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">1: 安装</span></span><br><span class="line">    ./b2 install</span><br><span class="line">    </span><br><span class="line"><span class="meta">  #</span><span class="bash">2: 配置</span></span><br><span class="line">      #2.1: 配置参数</span><br><span class="line">         vim /etc/profile</span><br><span class="line">      #2.2: 写入参数（最后一行加入）</span><br><span class="line">         export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/boost/include</span><br><span class="line">         export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/boost/lib</span><br><span class="line">         </span><br><span class="line"><span class="meta">  #</span><span class="bash">3: 启用环境</span></span><br><span class="line">      source /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">4: 添加动态库</span></span><br><span class="line">       #4.1: 打开文件</span><br><span class="line">         vim /etc/ld.so.conf</span><br><span class="line">       #4.2: 添加配置(最后一行加入)</span><br><span class="line">         /usr/local/boost/lib</span><br><span class="line">         </span><br><span class="line"><span class="meta">  #</span><span class="bash">5: 执行配置</span></span><br><span class="line">      sudo ldconfig</span><br><span class="line">  </span><br><span class="line"><span class="meta">  #</span><span class="bash">6：查看boost版本(应该是boost1.65)</span></span><br><span class="line">  sudo dpkg -S /usr/include/boost/version.hpp</span><br><span class="line"><span class="meta">#</span><span class="bash">详情参考 https://blog.csdn.net/u010608296/article/details/113194056</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>6.编译项目</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./autogen.sh</span><br><span class="line">./configure CFLAGS=&quot;-g -O0&quot; CXXFLAGS=&quot;-g -O0&quot; JFALGS=&quot;-g -O0&quot; FFLAGS=&quot;-g -O0&quot; CPPFLAGS=&quot;-g -O0&quot;</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/01/Jotochain%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-My-New-Post" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
