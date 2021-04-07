@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2021 | YPBlog</title>
+  <title>Comparable接口 | YPBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="YPBlog">
-<meta property="og:url" content="http://example.com/archives/2021/index.html">
+  <meta name="description" content="假如需要对一个类进行比较，可以实现Comparable接口，重写compareTo方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Comparable接口">
+<meta property="og:url" content="http://example.com/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/index.html">
 <meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="假如需要对一个类进行比较，可以实现Comparable接口，重写compareTo方法。">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-07T10:14:54.000Z">
+<meta property="article:modified_time" content="2021-04-07T10:15:38.584Z">
 <meta property="article:author" content="youpeng">
+<meta property="article:tag" content="java">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="YPBlog" type="application/atom+xml">
@@ -150,36 +155,55 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Comparable接口" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
-  	<time datetime="2021-04-07T10:14:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-07</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/">Comparable接口</a>
+    <h1 class="article-title" itemprop="name">
+      Comparable接口
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
+  	<time datetime="2021-04-07T10:14:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>假如需要对一个类进行比较，可以实现Comparable接口，重写compareTo方法。</p>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span>  <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">People</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">People</span><span class="params">(<span class="keyword">int</span> age, String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> age;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//重点在这，这是接口中唯一的一个方法</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(People p)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.age - p.age;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并且我们可以很容易对它进行排序</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;CompObj&gt; list = ...;<span class="comment">//初始化一个list</span></span><br><span class="line">Collections.sort(list); <span class="comment">//集合排序，就是这么简单</span></span><br><span class="line">CompObj array[] = ...;<span class="comment">//初始化一个数组</span></span><br><span class="line">Arrays.sort(list)； <span class="comment">//数组排序，就是这么简单</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="对象排序-实现Comparable接口实例"><a href="#对象排序-实现Comparable接口实例" class="headerlink" title="对象排序 实现Comparable接口实例"></a>对象排序 实现Comparable接口实例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">输入第1行给出3个正整数，分别为：N（&lt;&#x3D;105），即考生总数；L（&gt;&#x3D;60），为录取最低分数线，即德分和才分均不低于L的考生才有资格被考虑录取；H（&lt;100），为优先录取线——德分和才分均不低于此线被定义为“才德全尽”，此类考生按德才总分从高到低排序；才分不到</span><br><span class="line"> 但德分到线的一类考生属于“德胜才”，也按总分排序，但排在第一类考生之后；德才分均低于H，但是德分不低于才分的考生属于“才德兼</span><br><span class="line">亡”但尚有“德胜才”者，按总分排序，但排在第二类考生之后；其他达到最低线L的考生也按总分排序，但排在第三类考生之后。</span><br><span class="line"></span><br><span class="line"> 生按输入中说明的规则从高到低排序。当某类考生中有多人</span><br><span class="line">总分相同时，按其德分降序排列；若德分也并列，则按准考证号的升序输出。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分析</li>
+</ul>
+<p>定义一个学生类实现Comparable接口</p>
+<p>首先先要根据成绩给每个学生分类level，分为4类</p>
+<p>然后重写compareTo方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Student s)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>相同返回0，大于返回1，小于返回-1；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">T06</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        <span class="keyword">int</span> n = sc.nextInt();</span><br><span class="line">        Student.l = sc.nextInt();</span><br><span class="line">        Student.h = sc.nextInt();</span><br><span class="line">        Student[] stu = <span class="keyword">new</span> Student[n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">            stu[i] = <span class="keyword">new</span> Student(sc.nextInt(),sc.nextInt(),sc.nextInt());</span><br><span class="line">        &#125;</span><br><span class="line">        sc.close();</span><br><span class="line">        List&lt;Student&gt; list = <span class="keyword">new</span> ArrayList&lt;Student&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Student stuArr : stu)&#123;</span><br><span class="line">            <span class="keyword">if</span> (stuArr.score1&gt;=Student.l &amp;&amp;stuArr.score2&gt;=Student.l)&#123;</span><br><span class="line">                list.add(stuArr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        Collections.sort(list);</span><br><span class="line">        System.out.println(list.size());</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=list.size()-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">            System.out.println(list.get(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">public</span>  <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Student</span>&gt;</span>&#123;</span><br><span class="line">       <span class="keyword">static</span> <span class="keyword">int</span> l;</span><br><span class="line">       <span class="keyword">static</span> <span class="keyword">int</span> h;</span><br><span class="line">       <span class="keyword">int</span> id;</span><br><span class="line">       <span class="keyword">int</span> score1;</span><br><span class="line">       <span class="keyword">int</span> score2;</span><br><span class="line">       <span class="keyword">int</span> sum;</span><br><span class="line">       <span class="keyword">int</span> level;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(<span class="keyword">int</span> id, <span class="keyword">int</span> score1, <span class="keyword">int</span> score2)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">            <span class="keyword">this</span>.score1 = score1;</span><br><span class="line">            <span class="keyword">this</span>.score2 = score2;</span><br><span class="line">            sum=score1 + score2;</span><br><span class="line">            <span class="keyword">if</span>(score1 &gt;= h &amp;&amp; score2 &gt;= h)&#123;</span><br><span class="line">                level = <span class="number">4</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(score1 &gt;=h &amp;&amp; score2 &lt;h)&#123;</span><br><span class="line">                level = <span class="number">3</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(score1 &lt; h &amp;&amp; score1 &gt; score1)&#123;</span><br><span class="line">                level = <span class="number">2</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                level = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Student s)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (level == s.level) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sum == s.sum) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (score1 == s.score1) &#123;</span><br><span class="line">                        <span class="keyword">return</span> id - s.id;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> score1 - s.score1;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> sum - s.sum;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> level - s.level;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -191,73 +215,55 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2021-04-01T13:11:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JoTochain安装部署</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/">JoTochain安装部署</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoTochain%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  	<time datetime="2021-04-01T13:01:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/01/JoTochain%E6%B5%8B%E8%AF%95/">JoTochain测试</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -276,8 +282,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
