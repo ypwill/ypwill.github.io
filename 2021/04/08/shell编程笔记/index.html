@@ -6,15 +6,31 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2021 | YPBlog</title>
+  <title>shell编程笔记 | YPBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="YPBlog">
-<meta property="og:url" content="http://example.com/archives/2021/index.html">
+  <meta name="description" content="12#指定解释器#! &#x2F;bin&#x2F;sh  变量赋值 1234567#export var可导出为环境变量(全局)ypw@ubuntu:~$ var&#x3D;helloypw@ubuntu:~$ echo varvarypw@ubuntu:~$ echo $varhello">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell编程笔记">
+<meta property="og:url" content="http://example.com/2021/04/08/shell%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="12#指定解释器#! &#x2F;bin&#x2F;sh  变量赋值 1234567#export var可导出为环境变量(全局)ypw@ubuntu:~$ var&#x3D;helloypw@ubuntu:~$ echo varvarypw@ubuntu:~$ echo $varhello">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210407234404728.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408111907997.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408094928896.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408101018993.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408105540755.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408105751218.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408105938337.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408110347025.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408110740631.png">
+<meta property="og:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210408110740631.png">
+<meta property="article:published_time" content="2021-04-08T03:25:44.000Z">
+<meta property="article:modified_time" content="2021-04-08T03:26:53.633Z">
 <meta property="article:author" content="youpeng">
+<meta property="article:tag" content="shell">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/WYP/AppData/Roaming/Typora/typora-user-images/image-20210407234404728.png">
   
     <link rel="alternative" href="/atom.xml" title="YPBlog" type="application/atom+xml">
   
@@ -150,36 +166,97 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-shell编程笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/08/shell%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/" class="archive-article-date">
-  	<time datetime="2021-04-08T03:25:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-08</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/08/shell%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/">shell编程笔记</a>
+    <h1 class="article-title" itemprop="name">
+      shell编程笔记
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/04/08/shell%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/" class="archive-article-date">
+  	<time datetime="2021-04-08T03:25:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">指定解释器</span></span><br><span class="line"><span class="meta">#</span><span class="bash">! /bin/sh</span></span><br></pre></td></tr></table></figure>
+
+<p>变量赋值</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">export</span> var可导出为环境变量(全局)</span></span><br><span class="line"></span><br><span class="line">ypw@ubuntu:~$ var=hello</span><br><span class="line">ypw@ubuntu:~$ echo var</span><br><span class="line">var</span><br><span class="line">ypw@ubuntu:~$ echo $var</span><br><span class="line">hello</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>通配符 * ? []</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 匹配0个或多个</span><br><span class="line">？ 匹配一个任意字符</span><br><span class="line">[若干字符] 匹配方括号中的任意一个字符的一次出现</span><br></pre></td></tr></table></figure>
+
+<p>转义字符  ``   或   $()</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ypw@ubuntu:~$ var=`date`</span><br><span class="line">ypw@ubuntu:~$ echo $var</span><br><span class="line">2021年 04月 07日 星期三 23:37:33 CST</span><br><span class="line"></span><br><span class="line">ypw@ubuntu:~$ va=$(date)</span><br><span class="line">ypw@ubuntu:~$ echo $va</span><br><span class="line">2021年 04月 07日 星期三 23:39:54 CST</span><br></pre></td></tr></table></figure>
+
+<p>算数</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ypw@ubuntu:~$ v=33</span><br><span class="line">ypw@ubuntu:~$ echo $(($v+3))</span><br><span class="line">36</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210407234404728.png" alt="image-20210407234404728" style="zoom: 50%;" />
+
+
+
+<h3 id="条件测试"><a href="#条件测试" class="headerlink" title="条件测试"></a>条件测试</h3><p>test命令  或者[      ]    条件判度语句</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo $?  </span><br><span class="line"><span class="meta">#</span><span class="bash">返回上次执行结果</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408111907997.png" alt=" "></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var=57</span><br><span class="line">test $var -gt 100</span><br><span class="line">1      # 与平时不一样，真为0，假为1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-a #逻辑与</span><br><span class="line">-o #逻辑或</span><br></pre></td></tr></table></figure>
+
+<p>尽量把变量取值放在双引号中</p>
+<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if/then/elif/else/fi</span><br><span class="line">elif #就是else if </span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if [ -f ~/.bashrc ]; then</span><br><span class="line">    . ~/.bashrc</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">case/esac</span><br><span class="line">case命令类似于c的switch/case语句。每个匹配分支可以有多个命令，末尾必须以;;结束，执行时找到第一个匹配对的分支并执行相应的命令，然后直接跳到esac。</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408094928896.png" alt="image-20210408094928896" style="zoom: 33%;" />
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">! /bin/sh</span></span><br><span class="line"></span><br><span class="line">echo &quot;enter yes or no&quot;</span><br><span class="line">read BUF</span><br><span class="line">case &quot;$BUF&quot; in</span><br><span class="line"></span><br><span class="line">        yes|y|Y|YES)</span><br><span class="line">                echo &quot;It is a yes.&quot;;;</span><br><span class="line">        [nN]?)</span><br><span class="line">                echo &quot;It is a no.&quot;;;</span><br><span class="line">        *)</span><br><span class="line">                echo &quot;others&quot;;;</span><br><span class="line">esac</span><br><span class="line">echo &quot;going to return&quot;</span><br><span class="line">return 0</span><br><span class="line">echo &quot;end&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for&#x2F;do&#x2F;done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">! /bin/sh</span></span><br><span class="line">for FRUIT in apple banane pear; do</span><br><span class="line">	echo &quot;I like $FRUIT&quot;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408101018993.png" alt="image-20210408101018993" style="zoom: 67%;" />
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while/do/done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">! /bin/sh</span></span><br><span class="line"></span><br><span class="line">count=2</span><br><span class="line">echo &quot;enter your password&quot;</span><br><span class="line"></span><br><span class="line">read PASS</span><br><span class="line">while [ &quot;$PASS&quot; != &quot;123456&quot; -a $count -gt 0 ]; do</span><br><span class="line"></span><br><span class="line">        echo &quot;It is not correct,please try again!&quot;</span><br><span class="line">        count=$[count-1]</span><br><span class="line">        read PASS</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="位置参数和特殊变量"><a href="#位置参数和特殊变量" class="headerlink" title="位置参数和特殊变量"></a>位置参数和特殊变量</h3><p> <img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408105540755.png" alt="image-20210408105540755"></p>
+<h3 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h3><p>可以通过 | 把一个命令的输出传递给另一个命令的输入 </p>
+<p><img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408105751218.png" alt="image-20210408105751218"></p>
+<p><img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408105938337.png" alt="image-20210408105938337"></p>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p><img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408110347025.png" alt="image-20210408110347025" style="zoom: 50%;" /><img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408110740631.png" alt="image-20210408110740631"></p>
+<p>、<img src="C:\Users\WYP\AppData\Roaming\Typora\typora-user-images\image-20210408110740631.png" alt="image-20210408110740631" style="zoom:50%;" /></p>
+<h3 id="shell脚本调试"><a href="#shell脚本调试" class="headerlink" title="shell脚本调试"></a>shell脚本调试</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -191,133 +268,55 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/" class="archive-article-date">
-  	<time datetime="2021-04-07T10:14:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-07</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Comparable接口</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/">Comparable接口</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2021-04-01T13:11:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/">JoTochain安装部署</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shellchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/01/JoTochain%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  	<time datetime="2021-04-01T13:01:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-01</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/01/JoTochain%E6%B5%8B%E8%AF%95/">JoTochain测试</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shellchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -336,8 +335,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
