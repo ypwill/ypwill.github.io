@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -221,6 +221,78 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/StringBuffer%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/24/StringBuffer%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">StringBuffer使用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-24 15:19:05 / Modified: 15:23:43" itemprop="dateCreated datePublished" datetime="2021-04-24T15:19:05+08:00">2021-04-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="StringBuffer是可变长的字符串"><a href="#StringBuffer是可变长的字符串" class="headerlink" title="StringBuffer是可变长的字符串"></a>StringBuffer是可变长的字符串</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/24/StringBuffer%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/java%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%B8%8E%E5%92%8C%E6%88%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -246,7 +318,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-04-24 11:14:47 / Modified: 11:16:02" itemprop="dateCreated datePublished" datetime="2021-04-24T11:14:47+08:00">2021-04-24</time>
+      <time title="Created: 2021-04-24 11:14:47 / Modified: 11:17:03" itemprop="dateCreated datePublished" datetime="2021-04-24T11:14:47+08:00">2021-04-24</time>
     </span>
 
   
@@ -259,17 +331,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h3 id="amp-amp-amp-长路与-和-短路与"><a href="#amp-amp-amp-长路与-和-短路与" class="headerlink" title="&amp;   |   &amp;&amp;     长路与 和 短路与"></a>&amp;   |   &amp;&amp;     长路与 和 短路与</h3><p>无论长路与还是短路与<br>    两边的运算单元都是布尔值<br>    都为真时，才为真<br>    任意为假，就为假<br>区别<br>    长路与  两侧，都会被运算<br>    短路与  只要第一个是false，第二个就不进行运算了</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//长路与  无论第一个表达式的值是true或者false,第二个的值，都会被运算</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">        System.out.println( i== <span class="number">1</span> &amp; i++ ==<span class="number">2</span>  ); <span class="comment">//无论如何i++都会被执行，所以i的值变成了3</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//短路与 只要第一个表达式的值是false的，第二个表达式的值，就不需要进行运算了</span></span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span>;</span><br><span class="line">        System.out.println( j== <span class="number">1</span> &amp;&amp; j++ ==<span class="number">2</span>  );  <span class="comment">//因为j==1返回false,所以右边的j++就没有执行了，所以j的值，还是2</span></span><br><span class="line">        System.out.println(j);     </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="长路或-和-短路或"><a href="#长路或-和-短路或" class="headerlink" title="|     ||          长路或 和 短路或"></a>|     ||          长路或 和 短路或</h3><p>无论长路或还是短路或<br>    两边的运算单元都是布尔值<br>    都为假时，才为假<br>    任意为真，就为真<br>区别<br>    长路或  两侧都会被运算<br>    短路或 只要第一个是true的，第二个就不进行运算了</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//长路或  无论第一个表达式的值是true或者false,第二个的值，都会被运算</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">        System.out.println( i== <span class="number">1</span> | i++ ==<span class="number">2</span>  ); <span class="comment">//无论如何i++都会被执行，所以i的值变成了3</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//短路或 只要第一个表达式的值是true的，第二个表达式的值，就不需要进行运算了</span></span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span>;</span><br><span class="line">        System.out.println( j== <span class="number">2</span> || j++ ==<span class="number">2</span>  );  <span class="comment">//因为j==2返回true,所以右边的j++就没有执行了，所以j的值，还是2</span></span><br><span class="line">        System.out.println(j);             </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
+          <h3 id="amp-amp-amp-长路与-和-短路与"><a href="#amp-amp-amp-长路与-和-短路与" class="headerlink" title="&amp;   |   &amp;&amp;     长路与 和 短路与"></a>&amp;   |   &amp;&amp;     长路与 和 短路与</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/24/java%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%B8%8E%E5%92%8C%E6%88%96/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -806,10 +876,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2021-04-08 22:09:24 / Modified: 22:10:28" itemprop="dateCreated datePublished" datetime="2021-04-08T22:09:24+08:00">2021-04-08</time>
+      <time title="Created: 2021-04-08 22:09:24" itemprop="dateCreated datePublished" datetime="2021-04-08T22:09:24+08:00">2021-04-08</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-04-24 15:18:07" itemprop="dateModified" datetime="2021-04-24T15:18:07+08:00">2021-04-24</time>
+      </span>
 
   
 </div>
@@ -906,78 +982,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/04/08/shell%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="youpeng">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YPBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">Comparable接口</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-04-07 18:14:54 / Modified: 18:15:38" itemprop="dateCreated datePublished" datetime="2021-04-07T18:14:54+08:00">2021-04-07</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>假如需要对一个类进行比较，可以实现Comparable接口，重写compareTo方法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>

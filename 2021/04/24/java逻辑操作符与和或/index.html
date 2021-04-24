@@ -23,15 +23,15 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="&amp;   |   &amp;&amp;     长路与 和 短路与无论长路与还是短路与    两边的运算单元都是布尔值    都为真时，才为真    任意为假，就为假区别    长路与  两侧，都会被运算    短路与  只要第一个是false，第二个就不进行运算了 12345678910111213public class HelloWorld &amp;#123;    public sta">
+<meta name="description" content="&amp;   |   &amp;&amp;     长路与 和 短路与">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java逻辑操作符 &amp; 和 &amp;&amp;    | 和 ||">
 <meta property="og:url" content="http://example.com/2021/04/24/java%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%B8%8E%E5%92%8C%E6%88%96/index.html">
 <meta property="og:site_name" content="YPBlog">
-<meta property="og:description" content="&amp;   |   &amp;&amp;     长路与 和 短路与无论长路与还是短路与    两边的运算单元都是布尔值    都为真时，才为真    任意为假，就为假区别    长路与  两侧，都会被运算    短路与  只要第一个是false，第二个就不进行运算了 12345678910111213public class HelloWorld &amp;#123;    public sta">
+<meta property="og:description" content="&amp;   |   &amp;&amp;     长路与 和 短路与">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-04-24T03:14:47.000Z">
-<meta property="article:modified_time" content="2021-04-24T03:16:02.012Z">
+<meta property="article:modified_time" content="2021-04-24T03:17:03.362Z">
 <meta property="article:author" content="youpeng">
 <meta property="article:tag" content="java">
 <meta name="twitter:card" content="summary">
@@ -173,7 +173,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -253,7 +253,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-04-24 11:14:47 / Modified: 11:16:02" itemprop="dateCreated datePublished" datetime="2021-04-24T11:14:47+08:00">2021-04-24</time>
+      <time title="Created: 2021-04-24 11:14:47 / Modified: 11:17:03" itemprop="dateCreated datePublished" datetime="2021-04-24T11:14:47+08:00">2021-04-24</time>
     </span>
 
   
@@ -266,9 +266,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <span id="more"></span>
+        <h3 id="amp-amp-amp-长路与-和-短路与"><a href="#amp-amp-amp-长路与-和-短路与" class="headerlink" title="&amp;   |   &amp;&amp;     长路与 和 短路与"></a>&amp;   |   &amp;&amp;     长路与 和 短路与</h3><span id="more"></span>
 
-<h3 id="amp-amp-amp-长路与-和-短路与"><a href="#amp-amp-amp-长路与-和-短路与" class="headerlink" title="&amp;   |   &amp;&amp;     长路与 和 短路与"></a>&amp;   |   &amp;&amp;     长路与 和 短路与</h3><p>无论长路与还是短路与<br>    两边的运算单元都是布尔值<br>    都为真时，才为真<br>    任意为假，就为假<br>区别<br>    长路与  两侧，都会被运算<br>    短路与  只要第一个是false，第二个就不进行运算了</p>
+<p>无论长路与还是短路与<br>    两边的运算单元都是布尔值<br>    都为真时，才为真<br>    任意为假，就为假<br>区别<br>    长路与  两侧，都会被运算<br>    短路与  只要第一个是false，第二个就不进行运算了</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//长路与  无论第一个表达式的值是true或者false,第二个的值，都会被运算</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">        System.out.println( i== <span class="number">1</span> &amp; i++ ==<span class="number">2</span>  ); <span class="comment">//无论如何i++都会被执行，所以i的值变成了3</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//短路与 只要第一个表达式的值是false的，第二个表达式的值，就不需要进行运算了</span></span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span>;</span><br><span class="line">        System.out.println( j== <span class="number">1</span> &amp;&amp; j++ ==<span class="number">2</span>  );  <span class="comment">//因为j==1返回false,所以右边的j++就没有执行了，所以j的值，还是2</span></span><br><span class="line">        System.out.println(j);     </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
@@ -297,6 +297,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/04/24/StringBuffer%E4%BD%BF%E7%94%A8/" rel="next" title="StringBuffer使用">
+                  StringBuffer使用 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
