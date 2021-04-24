@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -212,6 +212,153 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/java%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%B8%8E%E5%92%8C%E6%88%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/24/java%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%B8%8E%E5%92%8C%E6%88%96/" class="post-title-link" itemprop="url">java逻辑操作符 & 和 &&    | 和 ||</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-24 11:14:47 / Modified: 11:16:02" itemprop="dateCreated datePublished" datetime="2021-04-24T11:14:47+08:00">2021-04-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h3 id="amp-amp-amp-长路与-和-短路与"><a href="#amp-amp-amp-长路与-和-短路与" class="headerlink" title="&amp;   |   &amp;&amp;     长路与 和 短路与"></a>&amp;   |   &amp;&amp;     长路与 和 短路与</h3><p>无论长路与还是短路与<br>    两边的运算单元都是布尔值<br>    都为真时，才为真<br>    任意为假，就为假<br>区别<br>    长路与  两侧，都会被运算<br>    短路与  只要第一个是false，第二个就不进行运算了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//长路与  无论第一个表达式的值是true或者false,第二个的值，都会被运算</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">        System.out.println( i== <span class="number">1</span> &amp; i++ ==<span class="number">2</span>  ); <span class="comment">//无论如何i++都会被执行，所以i的值变成了3</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//短路与 只要第一个表达式的值是false的，第二个表达式的值，就不需要进行运算了</span></span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span>;</span><br><span class="line">        System.out.println( j== <span class="number">1</span> &amp;&amp; j++ ==<span class="number">2</span>  );  <span class="comment">//因为j==1返回false,所以右边的j++就没有执行了，所以j的值，还是2</span></span><br><span class="line">        System.out.println(j);     </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="长路或-和-短路或"><a href="#长路或-和-短路或" class="headerlink" title="|     ||          长路或 和 短路或"></a>|     ||          长路或 和 短路或</h3><p>无论长路或还是短路或<br>    两边的运算单元都是布尔值<br>    都为假时，才为假<br>    任意为真，就为真<br>区别<br>    长路或  两侧都会被运算<br>    短路或 只要第一个是true的，第二个就不进行运算了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//长路或  无论第一个表达式的值是true或者false,第二个的值，都会被运算</span></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">        System.out.println( i== <span class="number">1</span> | i++ ==<span class="number">2</span>  ); <span class="comment">//无论如何i++都会被执行，所以i的值变成了3</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//短路或 只要第一个表达式的值是true的，第二个表达式的值，就不需要进行运算了</span></span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">2</span>;</span><br><span class="line">        System.out.println( j== <span class="number">2</span> || j++ ==<span class="number">2</span>  );  <span class="comment">//因为j==2返回true,所以右边的j++就没有执行了，所以j的值，还是2</span></span><br><span class="line">        System.out.println(j);             </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/MarkDown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/24/MarkDown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">MarkDown的使用方法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-24 10:35:22 / Modified: 10:38:00" itemprop="dateCreated datePublished" datetime="2021-04-24T10:35:22+08:00">2021-04-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="1-标题"><a href="#1-标题" class="headerlink" title="1.标题"></a>1.标题</h3><p><strong>语法: #+空格+名称</strong></p>
+<p>​
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/24/MarkDown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -552,69 +699,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/10/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="youpeng">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YPBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/10/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">SpringBoot学习笔记</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-04-10 14:36:33" itemprop="dateCreated datePublished" datetime="2021-04-10T14:36:33+08:00">2021-04-10</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/10/SpringBoot-Web%E5%BC%80%E5%8F%91%E5%B0%8Fdemon/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -894,85 +978,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/04/07/Comparable%E6%8E%A5%E5%8F%A3/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="youpeng">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YPBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">JoTochain安装部署</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-04-01 21:11:22" itemprop="dateCreated datePublished" datetime="2021-04-01T21:11:22+08:00">2021-04-01</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-04-07 18:17:17" itemprop="dateModified" datetime="2021-04-07T18:17:17+08:00">2021-04-07</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>1.安装git，并克隆文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装git</span></span><br><span class="line">apt install git</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看git版本</span></span><br><span class="line">git --version</span><br><span class="line"><span class="meta">#</span><span class="bash"> 克隆项目</span></span><br><span class="line">git clone https://gitlab.com/echoyang/JoToChain.git</span><br><span class="line"><span class="meta">#</span><span class="bash"> 切换分支</span></span><br><span class="line">git checkout tbac-wzh</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
