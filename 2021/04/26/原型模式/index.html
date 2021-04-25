@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="克隆羊问题 问题提出：现在有一只羊 tom，姓名为: tom, 年龄为：1，颜色为：白色，请编写程序创建和 tom 羊 属性完全相同的 10只羊。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原型模式">
+<meta property="og:url" content="http://example.com/2021/04/26/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="克隆羊问题 问题提出：现在有一只羊 tom，姓名为: tom, 年龄为：1，颜色为：白色，请编写程序创建和 tom 羊 属性完全相同的 10只羊。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-25T16:06:25.000Z">
+<meta property="article:modified_time" content="2021-04-25T16:07:04.487Z">
+<meta property="article:author" content="youpeng">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/04/26/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>原型模式 | YPBlog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YPBlog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">原型模式-基本介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E8%AE%A8%E8%AE%BA-%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E6%8B%B7%E8%B4%9D"><span class="nav-number"></span> <span class="nav-text">深入讨论-浅拷贝和深拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%85%E6%8B%B7%E8%B4%9D%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">浅拷贝的介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E6%8B%B7%E8%B4%9D%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">深拷贝应用实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E5%92%8C%E7%BB%86%E8%8A%82"><span class="nav-number"></span> <span class="nav-text">7.1      原型模式的注意事项和细节</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">youpeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/26/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          原型模式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-26 00:06:25 / Modified: 00:07:04" itemprop="dateCreated datePublished" datetime="2021-04-26T00:06:25+08:00">2021-04-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>克隆羊问题</p>
+<p>问题提出：现在有一只羊 tom，姓名为: tom, 年龄为：1，颜色为：白色，请编写程序创建和 tom 羊 属性完全相同的 10只羊。</p>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"><span class="comment">//传统的方法</span></span><br><span class="line">Sheep sheep = <span class="keyword">new</span> Sheep(<span class="string">&quot;tom&quot;</span>, <span class="number">1</span>, <span class="string">&quot;白色&quot;</span>);</span><br><span class="line"></span><br><span class="line">Sheep sheep2 = <span class="keyword">new</span> Sheep(sheep.getName(), sheep.getAge(), sheep.getColor()); Sheep sheep3 = <span class="keyword">new</span> Sheep(sheep.getName(), sheep.getAge(), sheep.getColor()); Sheep sheep4 = <span class="keyword">new</span> Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">Sheep sheep5 = <span class="keyword">new</span> Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());</span><br><span class="line"><span class="comment">//....</span></span><br><span class="line">System.out.println(sheep); System.out.println(sheep2); System.out.println(sheep3); System.out.println(sheep4); System.out.println(sheep5);</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>传统的方式的优缺点:</p>
+<ol>
+<li><p>优点是比较好理解，简单易操作</p>
+</li>
+<li><p>在创建新的对象时，总是需要重新获取原始对象的属性，如果创建的对象比较复杂时，效率较低</p>
+</li>
+<li><p>总是需要重新初始化对象，而不是动态地获得对象运行时的状态, 不够灵活</p>
+</li>
+<li><p>改进思路</p>
+</li>
+</ol>
+<p>思路：Java 中 Object 类是所有类的根类，Object 类提供了一个 clone()方法，该方法可以将一个 Java 对象复制一份，但是需要实现 clone 的 Java 类必须要实现一个接口 Cloneable，该接口表示该类能够复制且具有复制的能力 =&gt;原型模式</p>
+<h3 id="原型模式-基本介绍"><a href="#原型模式-基本介绍" class="headerlink" title="原型模式-基本介绍"></a>原型模式-基本介绍</h3><ol>
+<li><p>   原型模式(Prototype 模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型，创建新的对象</p>
+</li>
+<li><p>   原型模式是一种创建型设计模式，允许一个对象再创建另外一个可定制的对象，无需知道如何创建的细节</p>
+</li>
+<li><p>   工作原理是:通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 对象**.clone**()</p>
+</li>
+<li><p>   形象的理解：孙大圣拔出猴毛， 变出其它孙大圣</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sheep</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123; <span class="keyword">private</span> String name;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> age; <span class="keyword">private</span> String color;</span><br><span class="line">	<span class="keyword">private</span> String address = <span class="string">&quot;蒙古羊&quot;</span>;</span><br><span class="line">	<span class="keyword">public</span> Sheep friend; <span class="comment">//是对象,  克隆是会如何处理,  默认是浅拷贝</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Sheep</span><span class="params">(String name, <span class="keyword">int</span> age, String color)</span> </span>&#123; <span class="keyword">super</span>();</span><br><span class="line">	<span class="keyword">this</span>.name = name; <span class="keyword">this</span>.age = age; <span class="keyword">this</span>.color = color;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123; <span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line"> 		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getColor</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> color;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setColor</span><span class="params">(String color)</span> </span>&#123; <span class="keyword">this</span>.color = color;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//克隆该实例，使用默认的 clone 方法来完成</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span></span>&#123;</span><br><span class="line">	Sheep sheep = <span class="keyword">null</span>; <span class="keyword">try</span> &#123;</span><br><span class="line">	sheep = (Sheep)<span class="keyword">super</span>.clone();</span><br><span class="line">	&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	System.out.println(<span class="string">&quot;原型模式完成对象的创建&quot;</span>);</span><br><span class="line">	Sheep sheep = <span class="keyword">new</span> Sheep(<span class="string">&quot;tom&quot;</span>, <span class="number">1</span>, <span class="string">&quot;白色&quot;</span>);</span><br><span class="line">	sheep.friend = <span class="keyword">new</span> Sheep(<span class="string">&quot;jack&quot;</span>, <span class="number">2</span>, <span class="string">&quot;黑色&quot;</span>);</span><br><span class="line">	Sheep sheep2 = (Sheep)sheep.clone(); <span class="comment">//克隆</span></span><br><span class="line">        克隆Sheep sheep3 = (Sheep)sheep.clone(); <span class="comment">//克隆</span></span><br><span class="line">        克隆Sheep sheep4 = (Sheep)sheep.clone(); <span class="comment">//克隆克隆</span></span><br><span class="line">        克隆Sheep sheep5 = (Sheep)sheep.clone(); <span class="comment">//克隆</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>7.1      原型模式在 Spring 框架中源码分析</p>
+<ol>
+<li><p>  Spring 中原型 bean 的创建，就是原型模式的应用</p>
+</li>
+<li><p>  代码分析+Debug 源码</p>
+</li>
+</ol>
+<h2 id="深入讨论-浅拷贝和深拷贝"><a href="#深入讨论-浅拷贝和深拷贝" class="headerlink" title="深入讨论-浅拷贝和深拷贝"></a>深入讨论-浅拷贝和深拷贝</h2><h3 id="浅拷贝的介绍"><a href="#浅拷贝的介绍" class="headerlink" title="浅拷贝的介绍"></a>浅拷贝的介绍</h3><ol>
+<li><p> 对于数据类型是基本数据类型的成员变量，浅拷贝会直接进行值传递，也就是将该属性值复制一份给新的对象。</p>
+</li>
+<li><p> 对于数据类型是引用数据类型的成员变量，比如说成员变量是某个数组、某个类的对象等，那么浅拷贝会进行引用传递，也就是只是将该成员变量的引用值（内存地址）复制一份给新的对象。因为实际上两个对象的该成员变量都指向同一个实例。在这种情况下，在一个对象中修改该成员变量会影响到另一个对象的该成员变量值</p>
+</li>
+<li><p> 前面我们克隆羊就是浅拷贝</p>
+</li>
+<li><p> 浅拷贝是使用默认的 clone()方法来实现</p>
+</li>
+</ol>
+<p>sheep = (Sheep) super.clone();</p>
+<h3 id="深拷贝应用实例"><a href="#深拷贝应用实例" class="headerlink" title="深拷贝应用实例"></a>深拷贝应用实例</h3><ol>
+<li><p>  使用 重写 clone 方法实现深拷贝</p>
+</li>
+<li><p>  使用序列化来实现深拷贝</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeepCloneableTarget</span> <span class="keyword">implements</span> <span class="title">Serializable</span>, <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> String cloneName;</span><br><span class="line">	<span class="keyword">private</span> String cloneClass;</span><br><span class="line">	<span class="comment">//构造器</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DeepCloneableTarget</span><span class="params">(String cloneName, String 			cloneClass)</span> </span>&#123; <span class="keyword">this</span>.cloneName = cloneName;</span><br><span class="line">	<span class="keyword">this</span>.cloneClass = cloneClass;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//因为该类的属性，都是 String ,  因此我们这里使用默认的 clone 完成即可</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123; 	 <span class="keyword">return</span> <span class="keyword">super</span>.clone();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeepProtoType</span> <span class="keyword">implements</span> <span class="title">Serializable</span>, <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> String name; <span class="comment">//String 属 性</span></span><br><span class="line">	<span class="keyword">public</span> DeepCloneableTarget deepCloneableTarget;<span class="comment">// 引用类型</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DeepProtoType</span><span class="params">()</span> </span>&#123; <span class="keyword">super</span>();</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//深拷贝 - 方式 1  使用 clone 方法</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">	Object deep = <span class="keyword">null</span>;</span><br><span class="line">	<span class="comment">//这里完成对基本数据类型(属性)和 String 的克隆</span></span><br><span class="line">	deep = <span class="keyword">super</span>.clone();</span><br><span class="line">	<span class="comment">//对引用类型的属性，进行单独处理</span></span><br><span class="line">	DeepProtoType deepProtoType = (DeepProtoType)deep;</span><br><span class="line">	deepProtoType.deepCloneableTarget	= 						(DeepCloneableTarget)deepCloneableTarget.clone();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//深拷贝 - 方式 2 通过对象的序列化实现 (推荐) </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">deepClone</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="comment">//创建流对象</span></span><br><span class="line">        ByteArrayOutputStream bos = <span class="keyword">null</span>; </span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">null</span>; </span><br><span class="line">        ByteArrayInputStream bis = <span class="keyword">null</span>; </span><br><span class="line">        ObjectInputStream ois = <span class="keyword">null</span>;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">//序列化</span></span><br><span class="line">	bos = <span class="keyword">new</span> ByteArrayOutputStream(); oos = <span class="keyword">new</span> 					ObjectOutputStream(bos);</span><br><span class="line">	oos.writeObject(<span class="keyword">this</span>); <span class="comment">//当前这个对象以对象流的方式输出</span></span><br><span class="line">	<span class="comment">//反序列化</span></span><br><span class="line">	bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray()); ois = <span class="keyword">new</span> 	 ObjectInputStream(bis);</span><br><span class="line">	DeepProtoType copyObj = (DeepProtoType)ois.readObject();</span><br><span class="line">		<span class="keyword">return</span> copyObj;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Client.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	 DeepProtoType p = <span class="keyword">new</span> DeepProtoType(); p.name = <span class="string">&quot;宋江&quot;</span>;</span><br><span class="line">	p.deepCloneableTarget = <span class="keyword">new</span> DeepCloneableTarget(<span class="string">&quot;大牛&quot;</span>, <span class="string">&quot;小牛&quot;</span>);</span><br><span class="line"><span class="comment">//方式 1  完成深拷贝</span></span><br><span class="line"><span class="comment">//	DeepProtoType p2 = (DeepProtoType) p.clone();</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	System.out.println(&quot;p.name=&quot; + p.name + &quot;p.deepCloneableTarget=&quot; + p.deepCloneableTarget.hashCode());</span></span><br><span class="line"><span class="comment">//	System.out.println(&quot;p2.name=&quot; + p.name + &quot;p2.deepCloneableTarget=&quot; + p2.deepCloneableTarget.hashCode());</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//方式 2  完成深拷贝</span></span><br><span class="line">DeepProtoType p2 = (DeepProtoType) p.deepClone();</span><br><span class="line">System.out.println(<span class="string">&quot;p.name=&quot;</span> + p.name + <span class="string">&quot;p.deepCloneableTarget=&quot;</span> + p.deepCloneableTarget.hashCode()); System.out.println(<span class="string">&quot;p2.name=&quot;</span> + p.name + <span class="string">&quot;p2.deepCloneableTarget=&quot;</span> + p2.deepCloneableTarget.hashCode());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-1-原型模式的注意事项和细节"><a href="#7-1-原型模式的注意事项和细节" class="headerlink" title="7.1      原型模式的注意事项和细节"></a>7.1      原型模式的注意事项和细节</h2><ol>
+<li><p>  创建新的对象比较复杂时，可以利用原型模式简化对象的创建过程，同时也能够提高效率</p>
+</li>
+<li><p>  不用重新初始化对象，而是动态地获得对象运行时的状态</p>
+</li>
+<li><p>  如果原始对象发生变化(增加或者减少属性)，其它克隆对象的也会发生相应的变化，无需修改代码</p>
+</li>
+<li><p>  在实现深克隆的时候可能需要比较复杂的代码</p>
+</li>
+<li><p>  缺点：需要为每一个类配备一个克隆方法，这对全新的类来说不是很难，但对已有的类进行改造时，需要修改其源代码，违背了 ocp 原则.</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/24/Java-I-O%E6%B5%81/" rel="prev" title="Java I/O流">
+                  <i class="fa fa-chevron-left"></i> Java I/O流
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">youpeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
