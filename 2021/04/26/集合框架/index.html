@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="集合框架 使用数组的局限性：数据的大小不会随着加入数据的增多而增大，其在声明的时候就固定了。 为了解决数组的局限性，引入容器类的概念。 最常见的容器类就是ArrayList。容器的容量 capacity”会随着对象的增加，自动增长。不用担心出现数组的边界问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="集合框架">
+<meta property="og:url" content="http://example.com/2021/04/26/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="集合框架 使用数组的局限性：数据的大小不会随着加入数据的增多而增大，其在声明的时候就固定了。 为了解决数组的局限性，引入容器类的概念。 最常见的容器类就是ArrayList。容器的容量 capacity”会随着对象的增加，自动增长。不用担心出现数组的边界问题。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-26T13:30:37.000Z">
+<meta property="article:modified_time" content="2021-04-26T13:31:54.483Z">
+<meta property="article:author" content="youpeng">
+<meta property="article:tag" content="集合">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/04/26/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>集合框架 | YPBlog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YPBlog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ArrayList"><span class="nav-number">1.</span> <span class="nav-text">ArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#add-%E5%A2%9E%E5%8A%A0"><span class="nav-number">1.1.</span> <span class="nav-text">add    增加</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addAll-%E6%8A%8A%E5%8F%A6%E4%B8%80%E4%B8%AA%E5%AE%B9%E5%99%A8%E6%89%80%E6%9C%89%E5%AF%B9%E8%B1%A1%E9%83%BD%E5%8A%A0%E8%BF%9B%E6%9D%A5"><span class="nav-number">1.2.</span> <span class="nav-text">addAll    把另一个容器所有对象都加进来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#contains-%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">1.3.</span> <span class="nav-text">contains    判断是否存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">get    获取指定位置的对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-%E5%88%A0%E9%99%A4"><span class="nav-number">1.5.</span> <span class="nav-text">remove    删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2-set"><span class="nav-number">1.6.</span> <span class="nav-text">替换    set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#size-%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.7.</span> <span class="nav-text">size    大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#toArray-%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B0%E7%BB%84"><span class="nav-number">1.8.</span> <span class="nav-text">toArray    转换为数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clear-%E6%B8%85%E7%A9%BA"><span class="nav-number">1.9.</span> <span class="nav-text">clear    清空</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%8D%E5%8E%86Arraylist%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">遍历Arraylist的三种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8for%E5%BE%AA%E7%8E%AF%E9%81%8D%E5%8E%86"><span class="nav-number">2.1.</span> <span class="nav-text">用for循环遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%81%8D%E5%8E%86"><span class="nav-number">2.2.</span> <span class="nav-text">迭代器遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%A2%9E%E5%BC%BA%E5%9E%8Bfor%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.3.</span> <span class="nav-text">用增强型for循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6-LinkedList"><span class="nav-number">3.</span> <span class="nav-text">集合框架 LinkedList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-Deque"><span class="nav-number">3.1.</span> <span class="nav-text">双向链表 - Deque</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97-Queue"><span class="nav-number">3.2.</span> <span class="nav-text">队列 - Queue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6-%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">4.</span> <span class="nav-text">集合框架 二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E6%A6%82%E5%BF%B5"><span class="nav-number">4.1.</span> <span class="nav-text">二叉树概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%8E%92%E5%BA%8F%E6%A0%91"><span class="nav-number">4.2.</span> <span class="nav-text">二叉排序树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E6%8E%92%E5%BA%8F-%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">4.3.</span> <span class="nav-text">二叉树排序-中序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap"><span class="nav-number">4.4.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashSet"><span class="nav-number">4.5.</span> <span class="nav-text">HashSet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Set%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">4.5.1.</span> <span class="nav-text">Set的遍历</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E5%B7%A5%E5%85%B7%E7%B1%BBCollections"><span class="nav-number">4.6.</span> <span class="nav-text">Java工具类Collections</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">youpeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/26/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          集合框架
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-26 21:30:37 / Modified: 21:31:54" itemprop="dateCreated datePublished" datetime="2021-04-26T21:30:37+08:00">2021-04-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>集合框架</p>
+<p>使用数组的局限性：数据的大小不会随着加入数据的增多而增大，其在声明的时候就固定了。</p>
+<p>为了解决数组的局限性，引入容器类的概念。 最常见的容器类就是<br>ArrayList。容器的容量 capacity”会随着对象的增加，自动增长。不用担心出现数组的边界问题。</p>
+<span id="more"></span>
+
+<h2 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h2><p>ArrayList实现了接口List,常见的写法会把引用声明为接口List类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List list = <span class="keyword">new</span> ArrayList();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="add-增加"><a href="#add-增加" class="headerlink" title="add    增加"></a>add    增加</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> ArrayList list = <span class="keyword">new</span> ArrayList();</span><br><span class="line"> list.add(<span class="number">2</span>);</span><br><span class="line"><span class="comment">//在指定位子添加    list下标从0开始，第二个位子上插入5 </span></span><br><span class="line">list.add(<span class="number">2</span>,<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="addAll-把另一个容器所有对象都加进来"><a href="#addAll-把另一个容器所有对象都加进来" class="headerlink" title="addAll    把另一个容器所有对象都加进来"></a>addAll    把另一个容器所有对象都加进来</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ArrayList anotherList = <span class="keyword">new</span> ArrayList();</span><br><span class="line">list.addAll(anotherList);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="contains-判断是否存在"><a href="#contains-判断是否存在" class="headerlink" title="contains    判断是否存在"></a>contains    判断是否存在</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.contains(<span class="number">2</span>); <span class="comment">//返回true or false</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="get-获取指定位置的对象"><a href="#get-获取指定位置的对象" class="headerlink" title="get    获取指定位置的对象"></a>get    获取指定位置的对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.get(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="remove-删除"><a href="#remove-删除" class="headerlink" title="remove    删除"></a>remove    删除</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//remove可以根据下标删除ArrayList的元素</span></span><br><span class="line">list.remove(<span class="number">2</span>);</span><br><span class="line"><span class="comment">//也可以根据对象删除</span></span><br><span class="line">list.remove(object);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="替换-set"><a href="#替换-set" class="headerlink" title="替换    set"></a>替换    set</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//把下标是2的元素，替换为6</span></span><br><span class="line">list.set(<span class="number">2</span>,<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="size-大小"><a href="#size-大小" class="headerlink" title="size    大小"></a>size    大小</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.size();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="toArray-转换为数组"><a href="#toArray-转换为数组" class="headerlink" title="toArray    转换为数组"></a>toArray    转换为数组</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.toArray();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="clear-清空"><a href="#clear-清空" class="headerlink" title="clear    清空"></a>clear    清空</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list.clear();</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="遍历Arraylist的三种方法"><a href="#遍历Arraylist的三种方法" class="headerlink" title="遍历Arraylist的三种方法"></a>遍历Arraylist的三种方法</h2><h3 id="用for循环遍历"><a href="#用for循环遍历" class="headerlink" title="用for循环遍历"></a>用for循环遍历</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> h = list.get(i);</span><br><span class="line">            System.out.println(h);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="迭代器遍历"><a href="#迭代器遍历" class="headerlink" title="迭代器遍历"></a>迭代器遍历</h3><p>迭代器，从头空的位置开始判断，hasNext判断是否有下一个，如果有就取出来，然后指针往下移，直到移动到最后一个位子，hasNext返回false，表示后面没有了数据，迭代完毕。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第二种遍历，使用迭代器</span></span><br><span class="line">      System.out.println(<span class="string">&quot;--------使用while的iterator-------&quot;</span>);</span><br><span class="line">      Iterator it= list.iterator();</span><br><span class="line">      <span class="comment">//从最开始的位置判断&quot;下一个&quot;位置是否有数据</span></span><br><span class="line">      <span class="comment">//如果有就通过next取出来，并且把指针向下移动</span></span><br><span class="line">      <span class="comment">//直到&quot;下一个&quot;位置没有数据</span></span><br><span class="line">      <span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">          <span class="keyword">int</span> h = it.next();</span><br><span class="line">          System.out.println(h);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//迭代器的for写法</span></span><br><span class="line">      System.out.println(<span class="string">&quot;--------使用for的iterator-------&quot;</span>);</span><br><span class="line">      <span class="keyword">for</span> (Iterator iterator = list.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">          <span class="keyword">int</span> i = (<span class="keyword">int</span>) iterator.next();</span><br><span class="line">          System.out.println(i);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="用增强型for循环"><a href="#用增强型for循环" class="headerlink" title="用增强型for循环"></a>用增强型for循环</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i : list) &#123;</span><br><span class="line">            System.out.println(i);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="集合框架-LinkedList"><a href="#集合框架-LinkedList" class="headerlink" title="集合框架 LinkedList"></a>集合框架 LinkedList</h2><h3 id="双向链表-Deque"><a href="#双向链表-Deque" class="headerlink" title="双向链表 - Deque"></a>双向链表 - Deque</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;    </span><br><span class="line">        <span class="comment">//LinkedList是一个双向链表结构的list</span></span><br><span class="line">        LinkedList&lt;Hero&gt; ll =<span class="keyword">new</span> LinkedList&lt;Hero&gt;();     </span><br><span class="line">        <span class="comment">//所以可以很方便的在头部和尾部插入数据</span></span><br><span class="line">        <span class="comment">//在最后插入新的英雄</span></span><br><span class="line">        ll.addLast(<span class="keyword">new</span> Hero(<span class="string">&quot;hero1&quot;</span>));</span><br><span class="line">        ll.addLast(<span class="keyword">new</span> Hero(<span class="string">&quot;hero2&quot;</span>));</span><br><span class="line">        ll.addLast(<span class="keyword">new</span> Hero(<span class="string">&quot;hero3&quot;</span>));</span><br><span class="line">        System.out.println(ll);     </span><br><span class="line">        <span class="comment">//在最前面插入新的英雄</span></span><br><span class="line">        ll.addFirst(<span class="keyword">new</span> Hero(<span class="string">&quot;heroX&quot;</span>));</span><br><span class="line">        System.out.println(ll);     </span><br><span class="line">        <span class="comment">//查看最前面的英雄</span></span><br><span class="line">        System.out.println(ll.getFirst());</span><br><span class="line">        <span class="comment">//查看最后面的英雄</span></span><br><span class="line">        System.out.println(ll.getLast());   </span><br><span class="line">        <span class="comment">//查看不会导致英雄被删除</span></span><br><span class="line">        System.out.println(ll);</span><br><span class="line">        <span class="comment">//取出最前面的英雄</span></span><br><span class="line">        System.out.println(ll.removeFirst());  </span><br><span class="line">        <span class="comment">//取出最后面的英雄</span></span><br><span class="line">        System.out.println(ll.removeLast());  </span><br><span class="line">        <span class="comment">//取出会导致英雄被删除</span></span><br><span class="line">        System.out.println(ll);    </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="队列-Queue"><a href="#队列-Queue" class="headerlink" title="队列 - Queue"></a>队列 - Queue</h3><p>Queue是先进先出队列 FIFO，常用方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">offer 	在最后添加元素</span><br><span class="line">poll 	取出第一个元素</span><br><span class="line">peek 	查看第一个元素</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//和ArrayList一样，LinkedList也实现了List接口</span></span><br><span class="line">        List ll =<span class="keyword">new</span> LinkedList&lt;Hero&gt;();</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//所不同的是LinkedList还实现了Deque，进而又实现了Queue这个接口</span></span><br><span class="line">        <span class="comment">//Queue代表FIFO 先进先出的队列</span></span><br><span class="line">        Queue&lt;Hero&gt; q= <span class="keyword">new</span> LinkedList&lt;Hero&gt;();</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//加在队列的最后面</span></span><br><span class="line">        System.out.print(<span class="string">&quot;初始化队列：\t&quot;</span>);</span><br><span class="line">        q.offer(<span class="keyword">new</span> Hero(<span class="string">&quot;Hero1&quot;</span>));</span><br><span class="line">        q.offer(<span class="keyword">new</span> Hero(<span class="string">&quot;Hero2&quot;</span>));</span><br><span class="line">        q.offer(<span class="keyword">new</span> Hero(<span class="string">&quot;Hero3&quot;</span>));</span><br><span class="line">        q.offer(<span class="keyword">new</span> Hero(<span class="string">&quot;Hero4&quot;</span>));</span><br><span class="line">          </span><br><span class="line">        System.out.println(q);</span><br><span class="line">        System.out.print(<span class="string">&quot;把第一个元素取poll()出来:\t&quot;</span>);</span><br><span class="line">        <span class="comment">//取出第一个Hero，FIFO 先进先出</span></span><br><span class="line">        Hero h = q.poll();</span><br><span class="line">        System.out.println(h);</span><br><span class="line">        System.out.print(<span class="string">&quot;取出第一个元素之后的队列:\t&quot;</span>);</span><br><span class="line">        System.out.println(q);</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//把第一个拿出来看一看，但是不取出来</span></span><br><span class="line">        h=q.peek();</span><br><span class="line">        System.out.print(<span class="string">&quot;查看peek()第一个元素:\t&quot;</span>);</span><br><span class="line">        System.out.println(h);</span><br><span class="line">        System.out.print(<span class="string">&quot;查看并不会导致第一个元素被取出来:\t&quot;</span>);</span><br><span class="line">        System.out.println(q);      </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="集合框架-二叉树"><a href="#集合框架-二叉树" class="headerlink" title="集合框架 二叉树"></a>集合框架 二叉树</h2><h3 id="二叉树概念"><a href="#二叉树概念" class="headerlink" title="二叉树概念"></a>二叉树概念</h3><p>二叉树由各种节点组成</p>
+<p>二叉树特点：</p>
+<p>​    每个节点都可以有左子节点，右子节点，每个节点都有一个值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> collection;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 左子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node leftNode;</span><br><span class="line">    <span class="comment">// 右子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node rightNode;</span><br><span class="line">    <span class="comment">// 值</span></span><br><span class="line">    <span class="keyword">public</span> Object value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二叉排序树"><a href="#二叉排序树" class="headerlink" title="二叉排序树"></a>二叉排序树</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">假设通过二叉树对如下10个随机数进行排序</span><br><span class="line">67,7,30,73,10,0,78,81,10,74</span><br><span class="line">排序的第一个步骤是把数据插入到该二叉树中</span><br><span class="line">插入基本逻辑是，小、相同的放左边，大的放右边</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> collection;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 左子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node leftNode;</span><br><span class="line">    <span class="comment">// 右子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node rightNode;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 值</span></span><br><span class="line">    <span class="keyword">public</span> Object value;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 插入 数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object v)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 如果当前节点没有值，就把数据放在当前节点上</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == value)</span><br><span class="line">            value = v;</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 如果当前节点有值，就进行判断，新增的值与当前值的大小关系</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 新增的值，比当前值小或者相同</span></span><br><span class="line">             </span><br><span class="line">            <span class="keyword">if</span> ((Integer) v -((Integer)value) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == leftNode)</span><br><span class="line">                    leftNode = <span class="keyword">new</span> Node();</span><br><span class="line">                leftNode.add(v);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 新增的值，比当前值大</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == rightNode)</span><br><span class="line">                    rightNode = <span class="keyword">new</span> Node();</span><br><span class="line">                rightNode.add(v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">int</span> randoms[] = <span class="keyword">new</span> <span class="keyword">int</span>[] &#123; <span class="number">67</span>, <span class="number">7</span>, <span class="number">30</span>, <span class="number">73</span>, <span class="number">10</span>, <span class="number">0</span>, <span class="number">78</span>, <span class="number">81</span>, <span class="number">10</span>, <span class="number">74</span> &#125;;</span><br><span class="line">  </span><br><span class="line">        Node roots = <span class="keyword">new</span> Node();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> number : randoms) &#123;</span><br><span class="line">            roots.add(number);</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二叉树排序-中序遍历"><a href="#二叉树排序-中序遍历" class="headerlink" title="二叉树排序-中序遍历"></a>二叉树排序-中序遍历</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> collection;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 左子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node leftNode;</span><br><span class="line">    <span class="comment">// 右子节点</span></span><br><span class="line">    <span class="keyword">public</span> Node rightNode;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 值</span></span><br><span class="line">    <span class="keyword">public</span> Object value;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 插入 数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object v)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 如果当前节点没有值，就把数据放在当前节点上</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == value)</span><br><span class="line">            value = v;</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 如果当前节点有值，就进行判断，新增的值与当前值的大小关系</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 新增的值，比当前值小或者相同</span></span><br><span class="line">             </span><br><span class="line">            <span class="keyword">if</span> ((Integer) v -((Integer)value) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == leftNode)</span><br><span class="line">                    leftNode = <span class="keyword">new</span> Node();</span><br><span class="line">                leftNode.add(v);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 新增的值，比当前值大</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == rightNode)</span><br><span class="line">                    rightNode = <span class="keyword">new</span> Node();</span><br><span class="line">                rightNode.add(v);</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line"> <span class="comment">// 中序遍历所有的节点</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Object&gt; <span class="title">values</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        List&lt;Object&gt; values = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 左节点的遍历结果</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != leftNode)</span><br><span class="line">            values.addAll(leftNode.values());</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 当前节点</span></span><br><span class="line">        values.add(value);</span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 右节点的遍历结果</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != rightNode)</span><br><span class="line">  </span><br><span class="line">            values.addAll(rightNode.values());</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">return</span> values;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">int</span> randoms[] = <span class="keyword">new</span> <span class="keyword">int</span>[] &#123; <span class="number">67</span>, <span class="number">7</span>, <span class="number">30</span>, <span class="number">73</span>, <span class="number">10</span>, <span class="number">0</span>, <span class="number">78</span>, <span class="number">81</span>, <span class="number">10</span>, <span class="number">74</span> &#125;;</span><br><span class="line">  </span><br><span class="line">        Node roots = <span class="keyword">new</span> Node();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> number : randoms) &#123;</span><br><span class="line">            roots.add(number);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(roots.values()); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><p>HashMap储存数据的方式是—— 键值对 &lt;Key,Value&gt;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	HashMap&lt;String,String&gt; dictionary = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    dictionary.put(<span class="string">&quot;adc&quot;</span>, <span class="string">&quot;物理英雄&quot;</span>);</span><br><span class="line">    dictionary.put(<span class="string">&quot;apc&quot;</span>, <span class="string">&quot;魔法英雄&quot;</span>);</span><br><span class="line">    dictionary.put(<span class="string">&quot;t&quot;</span>, <span class="string">&quot;坦克&quot;</span>);     </span><br><span class="line">    System.out.println(dictionary.get(<span class="string">&quot;t&quot;</span>));<span class="comment">//输出坦克</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>键不能重复，值可以重复</strong></p>
+<p>对于HashMap而言，key是唯一的，不可以重复的。<br>所以，以相同的key 把不同的value插入到 Map中会导致旧元素被覆盖，只留下最后插入的元素。<br>不过，同一个对象可以作为值插入到map中，只要对应的key不一样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	HashMap&lt;String,String&gt; dictionary = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    dictionary.put(<span class="string">&quot;adc&quot;</span>, <span class="string">&quot;物理英雄&quot;</span>);</span><br><span class="line">    dictionary.put(<span class="string">&quot;apc&quot;</span>, <span class="string">&quot;魔法英雄&quot;</span>);</span><br><span class="line">    dictionary.put(<span class="string">&quot;t&quot;</span>, <span class="string">&quot;坦克&quot;</span>); </span><br><span class="line">    dictionary.put(<span class="string">&quot;t&quot;</span>, <span class="string">&quot;泰坦&quot;</span>);</span><br><span class="line">    System.out.println(dictionary.get(<span class="string">&quot;t&quot;</span>));<span class="comment">//输出泰坦</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h3><p>特点：Set中的元素不能重复</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashSetTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        HashSet&lt;String&gt; hash = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        hash.add(<span class="string">&quot;小明&quot;</span>);</span><br><span class="line">        System.out.println(hash);</span><br><span class="line">        <span class="comment">//第二次插入同样的数据，是插不进去的，容器中只会保留一个</span></span><br><span class="line">        hash.add(<span class="string">&quot;小明&quot;</span>);</span><br><span class="line">        System.out.println(hash);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外 Set中的元素，没有顺序。<br>严格的说，是没有按照元素的插入顺序排列</p>
+<h4 id="Set的遍历"><a href="#Set的遍历" class="headerlink" title="Set的遍历"></a>Set的遍历</h4><p>Set不提供get()来获取指定位置的元素<br>所以遍历需要用到迭代器，或者增强型for循环</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        HashSet&lt;Integer&gt; numbers = <span class="keyword">new</span> HashSet&lt;Integer&gt;();   </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            numbers.add(i);</span><br><span class="line">        &#125;    </span><br><span class="line">        <span class="comment">//Set不提供get方法来获取指定位置的元素</span></span><br><span class="line">        <span class="comment">//numbers.get(0)        </span></span><br><span class="line">        <span class="comment">//遍历Set可以采用迭代器iterator</span></span><br><span class="line">        <span class="keyword">for</span> (Iterator&lt;Integer&gt; iterator = numbers.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">            Integer i = (Integer) iterator.next();</span><br><span class="line">            System.out.println(i);</span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="comment">//或者采用增强型for循环</span></span><br><span class="line">        <span class="keyword">for</span> (Integer i : numbers) &#123;</span><br><span class="line">            System.out.println(i);</span><br><span class="line">        &#125;      </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="Java工具类Collections"><a href="#Java工具类Collections" class="headerlink" title="Java工具类Collections"></a>Java工具类Collections</h3><p>Collections是一个类，容器的工具类,就如同Arrays是数组的工具类</p>
+<ul>
+<li><p>反转    reverse</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; numbers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">         </span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">		numbers.add(i);</span><br><span class="line">        &#125;</span><br><span class="line">      </span><br><span class="line">		Collections.reverse(numbers);</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li>混淆    shuffle</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.shuffle(numbers);</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>排序    sort</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collections.sort(numbers);</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>交换    swap</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//交换0和5下标的数据</span></span><br><span class="line">Collections.swap(numbers,<span class="number">0</span>,<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>滚动    rotate</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//把集合向右滚动2个单位</span></span><br><span class="line">Collections.rotate(numbers,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9B%86%E5%90%88/" rel="tag"># 集合</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/26/Mysql%E5%91%BD%E4%BB%A4%E8%A1%8C/" rel="prev" title="Mysql命令行操作">
+                  <i class="fa fa-chevron-left"></i> Mysql命令行操作
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">youpeng</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
