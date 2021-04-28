@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript笔记">
+<meta property="og:url" content="http://example.com/2021/04/28/JavaScript%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="js">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-28T13:47:15.000Z">
+<meta property="article:modified_time" content="2021-04-28T13:49:45.882Z">
+<meta property="article:author" content="youpeng">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/04/28/JavaScript%E7%AC%94%E8%AE%B0/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>JavaScript笔记 | YPBlog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YPBlog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD-typeof"><span class="nav-number">1.1.</span> <span class="nav-text">变量类型判断          typeof</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">2.1.</span> <span class="nav-text">转换为字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B0%E5%AD%97"><span class="nav-number">2.2.</span> <span class="nav-text">转换为数字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E4%B8%BABoolen"><span class="nav-number">2.3.</span> <span class="nav-text">转换为Boolen</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Number-%E5%92%8CparseInt-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.4.</span> <span class="nav-text">Number()和parseInt()的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#String-%E5%92%8CtoString-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.5.</span> <span class="nav-text">String()和toString()的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.</span> <span class="nav-text">JavaScript对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BOM-%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B-Browser-Object-Model"><span class="nav-number">6.</span> <span class="nav-text">BOM      浏览器对象模型(Browser Object Model)</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">youpeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/28/JavaScript%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JavaScript笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-04-28 21:47:15 / Modified: 21:49:45" itemprop="dateCreated datePublished" datetime="2021-04-28T21:47:15+08:00">2021-04-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>js</p>
+<span id="more"></span>
+
+<p>使用var声明一个变量 </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> x = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;变量x的值:&quot;</span>+x);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h3><p>undefined，Boolean,Number,String，null</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//undifined</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> x; <span class="comment">//声明了变量x,但是没有赋值</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;声明了，但是没有赋值的变量 x: &#x27;</span>+x);</span></span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="comment">//布尔类型</span></span></span><br><span class="line"><span class="javascript"> <span class="keyword">var</span> x=<span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> y=<span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;布尔值:&quot;</span>+x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;布尔值:&quot;</span>+y);</span></span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="comment">//数字</span></span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> a=<span class="number">10</span>; <span class="comment">//十进制</span></span></span><br><span class="line"><span class="javascript"> <span class="built_in">document</span>.write(<span class="string">&quot;十进制 10 的值: &quot;</span>+a);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>与java不同的是，javascript中没有字符的概念，只有字符串，所以单引号和双引号，都用来表示字符串。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> x=<span class="string">&#x27;hello &#x27;</span>; <span class="comment">//单引号</span></span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> y=<span class="string">&quot;javascript&quot;</span>; <span class="comment">//双引号</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;单引号的字符串:&quot;</span>+x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;双引号的字符串:&quot;</span>+y);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="变量类型判断-typeof"><a href="#变量类型判断-typeof" class="headerlink" title="变量类型判断          typeof"></a>变量类型判断          typeof</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> x;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;声明了但是未赋值的时候，类型是： &#x27;</span>+<span class="keyword">typeof</span> x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line">  x=5;</span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;赋值为5之后，类型是： &#x27;</span>+<span class="keyword">typeof</span> x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line">  x=5.1;</span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;赋值为5.1之后，类型是： &#x27;</span>+<span class="keyword">typeof</span> x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  x=<span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;赋值为true之后，类型是： &#x27;</span>+<span class="keyword">typeof</span> x);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  x=<span class="string">&quot;hello&quot;</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;赋值为hello之后，类型是： &#x27;</span>+<span class="keyword">typeof</span> x); </span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><h4 id="转换为字符串"><a href="#转换为字符串" class="headerlink" title="转换为字符串"></a>转换为字符串</h4><p>无论是Number,Boolean还是String都有一个toString方法，用于转换为字符串     </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> c=<span class="string">&quot;hello javascript&quot;</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;字符串 &quot;</span>+c+<span class="string">&quot; 转换为字符串 &quot;</span>+c.toString());</span></span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="comment">//数字转字符串</span></span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> a=<span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;默认模式下，数字10转换为十进制的&#x27;</span>+a.toString()); <span class="comment">//默认模式，即十进制</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&#x27;基模式下，数字10转换为二进制的&#x27;</span>+a.toString(<span class="number">2</span>));</span></span><br><span class="line"><span class="javascript"><span class="comment">//基模式，二进制</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>); </span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="转换为数字"><a href="#转换为数字" class="headerlink" title="转换为数字"></a>转换为数字</h4><p>javascript分别提供内置函数  parseInt()和parseFloat()，转换为数字</p>
+<p><strong>注</strong>：如果被转换的字符串，同时由数字和字符构成，那么parseInt会一直定位数字，直到出现非字符。 所以”10abc” 会被转换为 10</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;字符串的\&quot;10\&quot;转换为数字的:&quot;</span>+<span class="built_in">parseInt</span>(<span class="string">&quot;10&quot;</span>)); <span class="comment">//转换整数</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;字符串的\&quot;3.14\&quot;转换为数字的:&quot;</span>+<span class="built_in">parseFloat</span>(<span class="string">&quot;3.14&quot;</span>));<span class="comment">//转换浮点数</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;字符串的\&quot;10abc\&quot;转换为数字的:&quot;</span>+<span class="built_in">parseInt</span>(<span class="string">&quot;10abc&quot;</span>)); <span class="comment">//判断每一位，直到发现不是数字的那一位</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"> </span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;字符串的\&quot;hello javascript\&quot;转换为数字的:&quot;</span>+<span class="built_in">parseInt</span>(<span class="string">&quot;hello javascript&quot;</span>)); <span class="comment">//如果完全不包含数字，则返回NaN - Not a Number</span></span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="转换为Boolen"><a href="#转换为Boolen" class="headerlink" title="转换为Boolen"></a>转换为Boolen</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">使用内置函数Boolean() 转换为Boolean值</span><br><span class="line">当转换字符串时：</span><br><span class="line">非空即为true</span><br><span class="line">当转换数字时：</span><br><span class="line">非0即为true</span><br><span class="line">当转换对象时：</span><br><span class="line">非null即为true</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Number-和parseInt-的区别"><a href="#Number-和parseInt-的区别" class="headerlink" title="Number()和parseInt()的区别"></a>Number()和parseInt()的区别</h4><p>Number()和parseInt()一样，都可以用来进行数字的转换<br>区别在于，当转换的内容包含非数字的时候，Number() 会返回NaN(Not a Number)<br>parseInt() 要看情况，如果以数字开头，就会返回开头的合法数字部分，如果以非数字开头，则返回NaN</p>
+<h4 id="String-和toString-的区别"><a href="#String-和toString-的区别" class="headerlink" title="String()和toString()的区别"></a>String()和toString()的区别</h4><p>String()和toString()一样都会返回字符串，区别在于对null的处理<br>String()会返回字符串”null”<br>toString() 就会报错，无法执行                 </p>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(<span class="string">&quot;这一句话是由一个自定义函数打印&quot;</span>);</span></span><br><span class="line">&#125;</span><br><span class="line">print();</span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="comment">//带参数</span></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">message</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="built_in">document</span>.write(message);</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="javascript">print(<span class="string">&quot;第一句话&quot;</span>);</span></span><br><span class="line"><span class="javascript">print(<span class="string">&quot;&lt;br&gt;&quot;</span>);</span></span><br><span class="line"><span class="javascript">print(<span class="string">&quot;第二句话&quot;</span>);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">showHello</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">   alert(<span class="string">&quot;Hello JavaScript&quot;</span>);</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">&quot;showHello()&quot;</span>&gt;</span>点击一下<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="JavaScript对象"><a href="#JavaScript对象" class="headerlink" title="JavaScript对象"></a>JavaScript对象</h3><p>JavaScript中的对象是有着属性和方法的一种特殊数据类型。 </p>
+<p>常见的对象有数字Number，字符串String，日期Date，数组Array等。 </p>
+<h3 id="BOM-浏览器对象模型-Browser-Object-Model"><a href="#BOM-浏览器对象模型-Browser-Object-Model" class="headerlink" title="BOM      浏览器对象模型(Browser Object Model)"></a>BOM      浏览器对象模型(Browser Object Model)</h3><p>浏览器对象包括<br>Window(窗口)<br>Navigator(浏览器)<br>Screen (客户端屏幕)<br>History(访问历史)<br>Location(浏览器地址)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/27/%E5%8F%8D%E5%B0%84/" rel="prev" title="反射">
+                  <i class="fa fa-chevron-left"></i> 反射
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">youpeng</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
