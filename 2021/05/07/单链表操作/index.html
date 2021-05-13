@@ -35,10 +35,13 @@
 <meta property="og:image" content="http://example.com/images/LinkedList2.png">
 <meta property="og:image" content="http://example.com/images/LinkedList3.png">
 <meta property="og:image" content="http://example.com/images/LinkedList4.png">
+<meta property="og:image" content="http://example.com/images/LinkedList5.png">
+<meta property="og:image" content="http://example.com/images/LinkedList6.png">
+<meta property="og:image" content="http://example.com/2021/05/07/%E5%8D%95%E9%93%BE%E8%A1%A8%E6%93%8D%E4%BD%9C/%E5%8D%95%E9%93%BE%E8%A1%A8%E6%93%8D%E4%BD%9C/image-20210511095252195.png">
 <meta property="article:published_time" content="2021-05-07T04:59:29.000Z">
-<meta property="article:modified_time" content="2021-05-10T14:48:54.406Z">
+<meta property="article:modified_time" content="2021-05-13T07:25:16.275Z">
 <meta property="article:author" content="youpeng">
-<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="数据结构与算法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/LinkedList.png">
 
@@ -166,7 +169,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">单链表的反转操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E9%80%92%E5%BD%92%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">非递归操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E5%8F%8D%E8%BD%AC"><span class="nav-number">1.2.</span> <span class="nav-text">递归反转</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">单链表的反转操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E9%80%92%E5%BD%92%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">非递归操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E5%8F%8D%E8%BD%AC"><span class="nav-number">1.2.</span> <span class="nav-text">递归反转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8%E5%89%8DN%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">反转链表前N个节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8%E7%9A%84%E4%B8%80%E9%83%A8%E5%88%86"><span class="nav-number">1.4.</span> <span class="nav-text">反转链表的一部分</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -179,7 +182,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -190,7 +193,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -265,7 +268,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-05-10 22:48:54" itemprop="dateModified" datetime="2021-05-10T22:48:54+08:00">2021-05-10</time>
+        <time title="Modified: 2021-05-13 15:25:16" itemprop="dateModified" datetime="2021-05-13T15:25:16+08:00">2021-05-13</time>
       </span>
 
   
@@ -294,6 +297,24 @@
 <p>最后递归完就是这个样子</p>
 <p><img src="/images/LinkedList3.png"></p>
 <p><img src="/images/LinkedList4.png"></p>
+<p><img src="/images/LinkedList5.png"></p>
+<p><img src="/images/LinkedList6.png"></p>
+<h3 id="反转链表前N个节点"><a href="#反转链表前N个节点" class="headerlink" title="反转链表前N个节点"></a>反转链表前N个节点</h3><p>我们实现这样一个函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将链表的前 n 个节点反转（n &lt;= 链表长度）</span></span><br><span class="line"><span class="function">ListNode <span class="title">reverseN</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>比如说对于下图链表，执行reverseN(head,3):</p>
+<p><img src="%E5%8D%95%E9%93%BE%E8%A1%A8%E6%93%8D%E4%BD%9C/image-20210511095252195.png"></p>
+<p>需要注意的是 将前n个节点反转之后，需要将原来的首节点的next指针指向n的下一个节点。如图所示就是将1号节点的next指向4号节点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ListNode successor = <span class="keyword">null</span>; <span class="comment">// 后驱节点</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 反转以 head 为起点的 n 个节点，返回新的头结点</span></span><br><span class="line"><span class="function">ListNode <span class="title">reverseN</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) &#123; </span><br><span class="line">        <span class="comment">// 记录第 n + 1 个节点,最后一个反转连接起来</span></span><br><span class="line">        successor = head.next;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 以 head.next 为起点，需要反转前 n - 1 个节点</span></span><br><span class="line">    ListNode last = reverseN(head.next, n - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    head.next.next = head;</span><br><span class="line">    <span class="comment">// 让反转之后的 head 节点和后面的节点连起来</span></span><br><span class="line">    head.next = successor;</span><br><span class="line">    <span class="keyword">return</span> last;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="反转链表的一部分"><a href="#反转链表的一部分" class="headerlink" title="反转链表的一部分"></a>反转链表的一部分</h3><p>现在解决我们最开始提出的问题，给一个索引区间 <code>[m,n]</code>（索引从 1 开始），仅仅反转区间中的链表元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ListNode <span class="title">reverseBetween</span><span class="params">(ListNode head, <span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>首先，如果 <code>m == 1</code>，就相当于反转链表开头的 <code>n</code> 个元素嘛，也就是我们刚才实现的功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ListNode <span class="title">reverseBetween</span><span class="params">(ListNode head, <span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// base case</span></span><br><span class="line">    <span class="keyword">if</span> (m == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 相当于反转前 n 个元素</span></span><br><span class="line">        <span class="keyword">return</span> reverseN(head, n);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -303,7 +324,7 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" rel="tag"># 数据结构与算法</a>
           </div>
 
         
