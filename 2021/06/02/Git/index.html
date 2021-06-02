@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="git 本地结构工作区：就是些代码的工作目录        git add 添加到暂存区 暂存区：临时存储                             git commit 添加到本地库 本地库：包含所有的历史版本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git">
+<meta property="og:url" content="http://example.com/2021/06/02/Git/index.html">
+<meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="git 本地结构工作区：就是些代码的工作目录        git add 添加到暂存区 暂存区：临时存储                             git commit 添加到本地库 本地库：包含所有的历史版本">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-06-02T07:58:25.000Z">
+<meta property="article:modified_time" content="2021-06-02T07:59:15.398Z">
+<meta property="article:author" content="youpeng">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/06/02/Git/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>Git | YPBlog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YPBlog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#git-%E6%9C%AC%E5%9C%B0%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">git 本地结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">git命令行操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">查看历史版本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-log"><span class="nav-number">3.1.</span> <span class="nav-text">git log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-log-%E2%80%93pretty-oneline-%E6%AF%8F%E4%B8%AA%E5%8E%86%E5%8F%B2%E5%8F%AA%E6%98%BE%E7%A4%BA%E4%B8%80%E8%A1%8C-hash%E5%80%BC%E5%92%8C%E6%97%A5%E5%BF%97"><span class="nav-number">3.2.</span> <span class="nav-text">git log –pretty&#x3D;oneline   每个历史只显示一行(hash值和日志)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-log-%E2%80%93oneline-%E6%AF%8F%E4%B8%AA%E5%8E%86%E5%8F%B2%E5%8F%AA%E6%98%BE%E7%A4%BA%E4%B8%80%E8%A1%8C%E4%B8%94%E6%98%BE%E7%A4%BAhash%E7%9A%84%E9%83%A8%E5%88%86%E5%80%BC"><span class="nav-number">3.3.</span> <span class="nav-text">git log –oneline   每个历史只显示一行且显示hash的部分值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-reflog-%E6%98%BE%E7%A4%BA%E5%8E%86%E5%8F%B2%E5%8F%AA%E6%98%BE%E7%A4%BA%E4%B8%80%E8%A1%8C-%E5%B9%B6%E4%B8%94%E6%98%BE%E7%A4%BA%E6%8C%87%E9%92%88-%E8%A6%81%E7%A7%BB%E5%8A%A8%E5%88%B0%E7%89%88%E6%9C%AC%E5%A4%9A%E5%B0%91%E6%AD%A5"><span class="nav-number">3.4.</span> <span class="nav-text">git reflog    显示历史只显示一行,并且显示指针(要移动到版本多少步)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E7%9A%84%E5%89%8D%E8%BF%9B%E5%90%8E%E9%80%80"><span class="nav-number">4.</span> <span class="nav-text">版本的前进后退</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E5%B9%B6%E6%89%BE%E5%9B%9E"><span class="nav-number">5.</span> <span class="nav-text">删除文件并找回</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">6.</span> <span class="nav-text">git 分支操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-%E8%BF%9C%E7%A8%8B%E5%BA%93%E6%93%8D%E4%BD%9C"><span class="nav-number">7.</span> <span class="nav-text">git 远程库操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E5%8D%8F%E5%90%8C%E5%BC%80%E5%8F%91-push-%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%88%E5%86%B2%E7%AA%81"><span class="nav-number">7.1.</span> <span class="nav-text">多人协同开发 push 可能会又冲突</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">youpeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/02/Git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-06-02 15:58:25 / Modified: 15:59:15" itemprop="dateCreated datePublished" datetime="2021-06-02T15:58:25+08:00">2021-06-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="git-本地结构"><a href="#git-本地结构" class="headerlink" title="git 本地结构"></a>git 本地结构</h3><p>工作区：就是些代码的工作目录        git add 添加到暂存区</p>
+<p>暂存区：临时存储                             git commit 添加到本地库</p>
+<p>本地库：包含所有的历史版本</p>
+<span id="more"></span>
+
+<p>​        </p>
+<h3 id="git命令行操作"><a href="#git命令行操作" class="headerlink" title="git命令行操作"></a>git命令行操作</h3><ol>
+<li><strong>git init</strong>  本地库初始化</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br><span class="line">Initialized empty Git repository in C:/Users/WYP/Desktop/git/.git/</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li> <strong>git status</strong> 状态查看</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"><span class="meta">#</span><span class="bash">提示还未添加到暂存区 使用git add &lt;file&gt;</span></span><br><span class="line">Untracked files:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</span><br><span class="line">        test.txt</span><br><span class="line"></span><br><span class="line">nothing added to commit but untracked files present (use &quot;git add&quot; to track)</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>**git add **提交到暂存区</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看状态</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</span><br><span class="line">        new file:   test.txt</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><strong>git rm –cached</strong> 从暂存区撤回</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git rm --cached test.txt</span></span><br><span class="line">rm &#x27;test.txt&#x27;</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Untracked files:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</span><br><span class="line">        test.txt</span><br><span class="line"></span><br><span class="line">nothing added to commit but untracked files present (use &quot;git add&quot; to track)</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li> git commit -m “commit message”  将暂存区内容提交到本地库</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;first commit&quot;</span> test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line">[master (root-commit) 4786e21] first commit</span><br><span class="line"> 1 file changed, 4 insertions(+)  #提示信息 一个文件改变  增加了4行</span><br><span class="line"> create mode 100644 test.txt</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li><p><strong>git restore <file></strong>  撤销某个文件修改的操作 只能是工作区的文件</p>
+</li>
+<li><p>**git reset HEAD <file>**可以把暂存区的修改撤销掉(unstage),重新放回工作区</p>
+</li>
+</ol>
+<h3 id="查看历史版本"><a href="#查看历史版本" class="headerlink" title="查看历史版本"></a>查看历史版本</h3><h4 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 5a61a842365732c79e5abc43327b0f4fee17e7c7 (HEAD -&gt; master)</span><br><span class="line">Author: wyp &lt;834298243@qq.com&gt;</span><br><span class="line">Date:   Wed Jun 2 11:08:12 2021 +0800</span><br><span class="line"></span><br><span class="line">    third commit</span><br><span class="line"></span><br><span class="line">commit 202f7cbcf47d4d50a45bc7e94b85cf6488cc6e91</span><br><span class="line">Author: wyp &lt;834298243@qq.com&gt;</span><br><span class="line">Date:   Wed Jun 2 10:55:16 2021 +0800</span><br><span class="line"></span><br><span class="line">    second add</span><br><span class="line"></span><br><span class="line">commit 4786e21ce61378bce21505826710c50c410b193e</span><br><span class="line">Author: wyp &lt;834298243@qq.com&gt;</span><br><span class="line">Date:   Wed Jun 2 10:49:36 2021 +0800</span><br><span class="line"></span><br><span class="line">    first commit</span><br></pre></td></tr></table></figure>
+
+<h4 id="git-log-–pretty-oneline-每个历史只显示一行-hash值和日志"><a href="#git-log-–pretty-oneline-每个历史只显示一行-hash值和日志" class="headerlink" title="git log –pretty=oneline   每个历史只显示一行(hash值和日志)"></a>git log –pretty=oneline   每个历史只显示一行(hash值和日志)</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span> --pretty=oneline</span></span><br><span class="line">5a61a842365732c79e5abc43327b0f4fee17e7c7 (HEAD -&gt; master) third commit</span><br><span class="line">202f7cbcf47d4d50a45bc7e94b85cf6488cc6e91 second add</span><br><span class="line">4786e21ce61378bce21505826710c50c410b193e first commit</span><br></pre></td></tr></table></figure>
+
+<h4 id="git-log-–oneline-每个历史只显示一行且显示hash的部分值"><a href="#git-log-–oneline-每个历史只显示一行且显示hash的部分值" class="headerlink" title="git log –oneline   每个历史只显示一行且显示hash的部分值"></a>git log –oneline   每个历史只显示一行且显示hash的部分值</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span> --oneline</span></span><br><span class="line">5a61a84 (HEAD -&gt; master) third commit</span><br><span class="line">202f7cb second add</span><br><span class="line">4786e21 first commit</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="git-reflog-显示历史只显示一行-并且显示指针-要移动到版本多少步"><a href="#git-reflog-显示历史只显示一行-并且显示指针-要移动到版本多少步" class="headerlink" title="git reflog    显示历史只显示一行,并且显示指针(要移动到版本多少步)"></a>git reflog    显示历史只显示一行,并且显示指针(要移动到版本多少步)</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git reflog</span></span><br><span class="line">813e205 (HEAD -&gt; master) HEAD@&#123;0&#125;: commit: add NNNNN</span><br><span class="line">86f83cd HEAD@&#123;1&#125;: commit: add MMMMMMM</span><br><span class="line">48009c6 HEAD@&#123;2&#125;: commit: add LLLLLL</span><br><span class="line">3b959bb HEAD@&#123;3&#125;: commit: add KKKK</span><br><span class="line">ef0e5e2 HEAD@&#123;4&#125;: commit: add JJJJJJ</span><br><span class="line">3cf03db HEAD@&#123;5&#125;: commit: add IIIIII</span><br><span class="line">7874fea HEAD@&#123;6&#125;: commit: add HHHHH</span><br><span class="line">5a61a84 HEAD@&#123;7&#125;: commit: third commit</span><br><span class="line">202f7cb HEAD@&#123;8&#125;: commit: second add</span><br><span class="line">4786e21 HEAD@&#123;9&#125;: commit (initial): first commit</span><br></pre></td></tr></table></figure>
+
+<h3 id="版本的前进后退"><a href="#版本的前进后退" class="headerlink" title="版本的前进后退"></a>版本的前进后退</h3><p>版本前进后退 实质就是指针的移动</p>
+<ol>
+<li><p>基于索引值操作[推荐]</p>
+<p>git rest –hard [局部索引值]</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git reflog</span></span><br><span class="line">813e205 (HEAD -&gt; master) HEAD@&#123;0&#125;: commit: add NNNNN</span><br><span class="line">86f83cd HEAD@&#123;1&#125;: commit: add MMMMMMM</span><br><span class="line">48009c6 HEAD@&#123;2&#125;: commit: add LLLLLL</span><br><span class="line">3b959bb HEAD@&#123;3&#125;: commit: add KKKK</span><br><span class="line">ef0e5e2 HEAD@&#123;4&#125;: commit: add JJJJJJ</span><br><span class="line"></span><br><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git reset --hard 86f83cd</span></span><br><span class="line">HEAD is now at 86f83cd add MMMMMMM</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> git reflog</span></span><br><span class="line">86f83cd (HEAD -&gt; master) HEAD@&#123;0&#125;: reset: moving to 86f83cd   #指针指向86f83cd</span><br><span class="line">813e205 HEAD@&#123;1&#125;: commit: add NNNNN</span><br><span class="line">86f83cd (HEAD -&gt; master) HEAD@&#123;2&#125;: commit: add MMMMMMM</span><br><span class="line">48009c6 HEAD@&#123;3&#125;: commit: add LLLLLL</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>使用 ^ 符号   （只能后退 不能前进）</p>
+<p><strong>git reset –hard HEAD^^</strong>               ^ 表示后退的步数</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git reset --hard HEAD^^</span>  </span><br><span class="line">HEAD is now at 3b959bb add KKKK</span><br><span class="line"></span><br><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git reflog</span></span><br><span class="line">3b959bb (HEAD -&gt; master) HEAD@&#123;0&#125;: reset: moving to HEAD^^</span><br><span class="line">86f83cd HEAD@&#123;1&#125;: reset: moving to 86f83cd</span><br><span class="line">813e205 HEAD@&#123;2&#125;: commit: add NNNNN</span><br><span class="line">86f83cd HEAD@&#123;3&#125;: commit: add MMMMMMM</span><br><span class="line">48009c6 HEAD@&#123;4&#125;: commit: add LLLLLL</span><br><span class="line">3b959bb (HEAD -&gt; master) HEAD@&#123;5&#125;: commit: add KKKK</span><br><span class="line">ef0e5e2 HEAD@&#123;6&#125;: commit: add JJJJJJ</span><br><span class="line">3cf03db HEAD@&#123;7&#125;: commit: add IIIIII</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>使用 ~ 符号    只能后退</p>
+<p><strong>git reset –hard HEAD~n</strong>  注：表示后退 n 步</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git reset --hard HEAD~2</span></span><br><span class="line">HEAD is now at 3cf03db add IIIIII</span><br><span class="line"></span><br><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git reflog</span></span><br><span class="line">3cf03db (HEAD -&gt; master) HEAD@&#123;0&#125;: reset: moving to HEAD~2</span><br><span class="line">3b959bb HEAD@&#123;1&#125;: reset: moving to HEAD^^</span><br><span class="line">86f83cd HEAD@&#123;2&#125;: reset: moving to 86f83cd</span><br><span class="line">813e205 HEAD@&#123;3&#125;: commit: add NNNNN</span><br><span class="line">86f83cd HEAD@&#123;4&#125;: commit: add MMMMMMM</span><br><span class="line">48009c6 HEAD@&#123;5&#125;: commit: add LLLLLL</span><br><span class="line">3b959bb HEAD@&#123;6&#125;: commit: add KKKK</span><br><span class="line">ef0e5e2 HEAD@&#123;7&#125;: commit: add JJJJJJ</span><br><span class="line">3cf03db (HEAD -&gt; master) HEAD@&#123;8&#125;: commit: add IIIIII</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除文件并找回"><a href="#删除文件并找回" class="headerlink" title="删除文件并找回"></a>删除文件并找回</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">找回操作：git reset --hard [指针位置] </span><br><span class="line">删除操作已经提交到本地库：指针位置指向历史记录(回到之前未删除版本)</span><br><span class="line">删除操作尚未提交到本地库：指针位置使用 HEAD(git reset --hard HEAD)</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-分支操作"><a href="#git-分支操作" class="headerlink" title="git 分支操作"></a>git 分支操作</h3><ol>
+<li><p>git branch -v             查看所有分支</p>
+</li>
+<li><p>git branch  dev          创建新的分支</p>
+</li>
+<li><p>git checkout dev        切换分支</p>
+</li>
+<li><p>合并分支</p>
+<p>新创建dev分支   修改test.text  然后在主分支上合并</p>
+<p>第一步:切换到接受修改的分支(被合并,增加新内容)上</p>
+<p><strong>git checkout [**被合并分支名</strong>master]**       切换分支</p>
+<p>第二步：执行 merge 命令 (合并分支指令)</p>
+<p>*<em>git merge [有新内容分支名**</em>]**</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge dev</span></span><br><span class="line">Updating 813e205..63b9d70</span><br><span class="line">Fast-forward</span><br><span class="line"> test.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> </span><br><span class="line"><span class="meta"> #</span><span class="bash"> 两个分支同步</span></span><br><span class="line"><span class="meta"> $</span><span class="bash"> git branch -v</span></span><br><span class="line">  dev    63b9d70 dev modefied</span><br><span class="line">* master 63b9d70 dev modefied</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><p>解决冲突</p>
+<p>当同一个文件被不同分支的人 修改后  merge会出现失败  </p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge dev</span></span><br><span class="line">Auto-merging test.txt</span><br><span class="line">CONFLICT (content): Merge conflict in test.txt</span><br><span class="line">Automatic merge failed; fix conflicts and then commit the result.</span><br><span class="line"></span><br><span class="line">WYP@LAPTOP-UB4R539A MINGW64 ~/Desktop/git (master|MERGING)    # 后缀会显示成MERGING</span><br></pre></td></tr></table></figure>
+
+<p>​    查看被修改文件信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1.$ cat test.txt</span><br><span class="line">2.MMMMMMMMMMMMMMMMMMM</span><br><span class="line">3.NNNNNNNNNNNNNNNNNNNNNN</span><br><span class="line">4.&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br><span class="line">5.ooooooooooooooooooooooo   ## modefied by master</span><br><span class="line">6.=======</span><br><span class="line">7.ooooooooooooooooooooooo    ##### modefied by dev</span><br><span class="line">8.&gt;&gt;&gt;&gt;&gt;&gt;&gt; dev</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 4-6行可以看作是当前分支修改的内容</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 7-8 是dev分支修改的内容</span></span></span><br></pre></td></tr></table></figure>
+
+<p>解决办法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 首先修改文件内容   将 符号行删除  &lt;&lt;&lt;&lt;&lt;&lt;  ==========  然后修改至自己满意的状态  然后查看status</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">You have unmerged paths.</span><br><span class="line">  (fix conflicts and run &quot;git commit&quot;)</span><br><span class="line">  (use &quot;git merge --abort&quot; to abort the merge)</span><br><span class="line"></span><br><span class="line">Unmerged paths:   </span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to mark resolution)  ## 提示使用 git add 标记 </span><br><span class="line">        both modified:   test.txt</span><br><span class="line"></span><br><span class="line">no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">All conflicts fixed but you are still merging.</span><br><span class="line">  (use &quot;git commit&quot; to conclude merge)  ## 提示使用merge</span><br><span class="line">  </span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;resolve merge&quot;</span> test.txt</span></span><br><span class="line">fatal: cannot do a partial commit during a merge.      ## 不能带文件名</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;resolve merge&quot;</span></span></span><br><span class="line">[master b135642] resolve merge      ## 完成 合并</span><br></pre></td></tr></table></figure>
+
+<p>​    </p>
+<h3 id="git-远程库操作"><a href="#git-远程库操作" class="headerlink" title="git 远程库操作"></a>git 远程库操作</h3><ol>
+<li>  git remote add origin https://…   给远程库起别名</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> git remote -v  查看远程库别名</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote -v</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加远程仓库地址别名    别名叫origin</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote add origin https://gitee.com/wenyoupeng/test.git</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 再次查看 remote</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote -v</span></span><br><span class="line">origin  https://gitee.com/wenyoupeng/test.git (fetch)</span><br><span class="line">origin  https://gitee.com/wenyoupeng/test.git (push)</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li> git push origin master  推送</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git push origin1 master</span></span><br><span class="line">Enumerating objects: 3, done.</span><br><span class="line">Counting objects: 100% (3/3), done.</span><br><span class="line">Writing objects: 100% (3/3), 218 bytes | 109.00 KiB/s, done.</span><br><span class="line">Total 3 (delta 0), reused 0 (delta 0), pack-reused 0</span><br><span class="line">remote: Powered by GITEE.COM [GNK-5.0]</span><br><span class="line">To https://gitee.com/wenyoupeng/test.git</span><br><span class="line"> * [new branch]      master -&gt; master</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="3">
+<li><p>git clone https://</p>
+<p>克隆仓库到本地</p>
+</li>
+<li><p>git pull origin master</p>
+<p>在别人修改了分支里的内容时   你需要同步你的代码   使用pull命令</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 更新内容 拉取到本地</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull origin1 master</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="多人协同开发-push-可能会又冲突"><a href="#多人协同开发-push-可能会又冲突" class="headerlink" title="多人协同开发 push 可能会又冲突"></a>多人协同开发 push 可能会又冲突</h4><p>如果不是基于 GitHub 远程库的最新版所做的修改，不能推送，必须先拉取。</p>
+<p>拉取下来后如果进入冲突状态，则按照<strong>分支冲突解决操作</strong>解决即可。</p>
+<p>将冲突的地方删了  保存为自己想要修改后的样子 </p>
+<p>然后再add   最后直接  git commit -m “modefied”    </p>
+<p>不需要加文件名</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/05/25/JWT%E5%85%A5%E9%97%A8/" rel="prev" title="JWT入门">
+                  <i class="fa fa-chevron-left"></i> JWT入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">youpeng</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
