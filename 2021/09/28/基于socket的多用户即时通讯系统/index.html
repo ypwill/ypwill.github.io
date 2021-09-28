@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="建立通讯的类和对象客户端和服务端通过传输 Message对象和user对象来进行通讯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于socket的多用户即时通讯系统">
+<meta property="og:url" content="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="建立通讯的类和对象客户端和服务端通过传输 Message对象和user对象来进行通讯">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sPOoQ.png">
+<meta property="og:image" content="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sAb1s.png">
+<meta property="og:image" content="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sLtjH.png">
+<meta property="article:published_time" content="2021-09-28T01:46:50.000Z">
+<meta property="article:modified_time" content="2021-09-28T01:47:44.989Z">
+<meta property="article:author" content="youpeng">
+<meta property="article:tag" content="socke">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sPOoQ.png">
+
+
+<link rel="canonical" href="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>基于socket的多用户即时通讯系统 | YPBlog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YPBlog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-归档"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-关于"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E9%80%9A%E8%AE%AF%E7%9A%84%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">建立通讯的类和对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0-%E2%80%94-%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">功能实现  —  用户登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0-%E2%80%94-%E6%8B%89%E5%8F%96%E5%9C%A8%E7%BA%BF%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">功能实现   —  拉取在线用户列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.</span> <span class="nav-text">无异常退出系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%81%E8%81%8A"><span class="nav-number">5.</span> <span class="nav-text">私聊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0-%E2%80%94-%E7%BE%A4%E8%81%8A"><span class="nav-number">6.</span> <span class="nav-text">功能实现 —  群聊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E-%E2%80%94-%E5%8F%91%E9%80%81%E6%96%87%E4%BB%B6"><span class="nav-number">7.</span> <span class="nav-text">功能说明  —  发送文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0-%E2%80%94-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81%E6%96%B0%E9%97%BB"><span class="nav-number">8.</span> <span class="nav-text">功能实现  —  服务器推送新闻</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD"><span class="nav-number">9.</span> <span class="nav-text">扩展功能</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">youpeng</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于socket的多用户即时通讯系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-09-28 09:46:50 / Modified: 09:47:44" itemprop="dateCreated datePublished" datetime="2021-09-28T09:46:50+08:00">2021-09-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="建立通讯的类和对象"><a href="#建立通讯的类和对象" class="headerlink" title="建立通讯的类和对象"></a>建立通讯的类和对象</h3><p>客户端和服务端通过传输 Message对象和user对象来进行通讯</p>
+<span id="more"></span>
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/4sPOoQ"><img src="%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sPOoQ.png" alt="4sPOoQ.png"></a></p>
+<h3 id="功能实现-—-用户登录"><a href="#功能实现-—-用户登录" class="headerlink" title="功能实现  —  用户登录"></a>功能实现  —  用户登录</h3><ol>
+<li><p>功能说明</p>
+<p>规定 用户名/id = 100，密码123456就可以登陆，其他用户不能登录，后面使用HashMap模拟数据库，可以多个用户登录</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/4sAb1s"><img src="%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sAb1s.png" alt="4sAb1s.png"></a></p>
+<p>界面设计</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QQView</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> loop = <span class="keyword">true</span>; <span class="comment">//控制是否显示菜单</span></span><br><span class="line">    <span class="keyword">private</span> String key = <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> QQView().mainMenu();</span><br><span class="line">        System.out.println(<span class="string">&quot;客户端退出系统&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//显示主菜单</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">mainMenu</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (loop)&#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;===========欢迎登录网络通信系统===========&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;\t\t 1 登录系统&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;\t\t 9 退出系统&quot;</span>);</span><br><span class="line">            System.out.print(<span class="string">&quot;请输入你的选择: &quot;</span>);</span><br><span class="line">            key = Utility.readString(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">switch</span> (key)&#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&quot;1&quot;</span>:</span><br><span class="line">                    System.out.print(<span class="string">&quot;请输入用户号：&quot;</span>);</span><br><span class="line">                    String userId = Utility.readString(<span class="number">50</span>);</span><br><span class="line">                    System.out.print(<span class="string">&quot;请输入密 码：&quot;</span>);</span><br><span class="line">                    String passwd = Utility.readString(<span class="number">50</span>);</span><br><span class="line">                    <span class="comment">// 需要到服务端验证用户是否合法</span></span><br><span class="line">                    <span class="keyword">if</span> (<span class="keyword">true</span>)&#123;  <span class="comment">//TODO</span></span><br><span class="line">                        System.out.println(<span class="string">&quot;===========欢迎 (用户 &quot;</span> + userId + <span class="string">&quot; 登录成功) ===========&quot;</span>);</span><br><span class="line">                        <span class="keyword">while</span> (loop)&#123;</span><br><span class="line">                            System.out.println(<span class="string">&quot;\n=========网络通信系统二级菜单(用户 &quot;</span> + userId + <span class="string">&quot; )=======&quot;</span>);</span><br><span class="line">                            System.out.println(<span class="string">&quot;\t\t 1 显示在线用户列表&quot;</span>);</span><br><span class="line">                            System.out.println(<span class="string">&quot;\t\t 2 群发消息&quot;</span>);</span><br><span class="line">                            System.out.println(<span class="string">&quot;\t\t 3 私聊消息&quot;</span>);</span><br><span class="line">                            System.out.println(<span class="string">&quot;\t\t 4 发送文件&quot;</span>);</span><br><span class="line">                            System.out.println(<span class="string">&quot;\t\t 9 退出系统&quot;</span>);</span><br><span class="line">                            System.out.print(<span class="string">&quot;请输入你的选择: &quot;</span>);</span><br><span class="line">                            key = Utility.readString(<span class="number">1</span>);</span><br><span class="line">                            <span class="keyword">switch</span> (key)&#123;</span><br><span class="line">                                <span class="keyword">case</span> <span class="string">&quot;1&quot;</span>:</span><br><span class="line">                                    System.out.println(<span class="string">&quot;显示在线用户列表&quot;</span>);</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                                <span class="keyword">case</span> <span class="string">&quot;2&quot;</span>:</span><br><span class="line">                                    System.out.println(<span class="string">&quot;群发消息&quot;</span>);</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                                <span class="keyword">case</span> <span class="string">&quot;3&quot;</span>:</span><br><span class="line">                                    System.out.println(<span class="string">&quot;私聊消息&quot;</span>);</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                                <span class="keyword">case</span> <span class="string">&quot;4&quot;</span>:</span><br><span class="line">                                    System.out.println(<span class="string">&quot;发送文件&quot;</span>);</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                                <span class="keyword">case</span> <span class="string">&quot;9&quot;</span>:</span><br><span class="line">                                    loop = <span class="keyword">false</span>;</span><br><span class="line">                                    <span class="keyword">break</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;=========登录失败=========&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&quot;9&quot;</span>:</span><br><span class="line">                    loop = <span class="keyword">false</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>登录流程：</p>
+<p>1.在主页面用户用户按1登录系统，输入用户名密码，此时需要在服务器端进行用户名密码验证，通过userClientService.checkUser方法。在userClientService.checkUser中 需要连接服务器，将创建的user对象通过对象流ObjectOutputStream 发送给服务器端进行验证，服务器端会返回一个Message回来，客户端通过查看Message的type来判断是否登录成功。登录成功后，需要创建一个与服务。器保持通信的线程 -》创建一个类 ClientConnectServerThread，在这个线程里面循环读取message信息。并且这里为了后面客户端扩展，我们将线程放入集合管理MangeClientConnectServerThread中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 18:58</span></span><br><span class="line"><span class="comment"> * 管理客户端连接到服务器端的线程的类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MangeClientConnectServerThread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//把多个线程放入HashMap集合，key就是用户id，value就是线程</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;String,ClientConnectServerThread&gt; hm = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将某个线程加入到集合</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span>  <span class="title">addClientConnectServerThread</span><span class="params">(String userId,ClientConnectServerThread clientConnectServerThread)</span></span>&#123;</span><br><span class="line">        hm.put(userId,clientConnectServerThread);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通过userId可以得到相应的线程</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ClientConnectServerThread <span class="title">getClientConnectServerThread</span><span class="params">(String userId)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hm.get(userId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//客户端连接服务器端线程</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientConnectServerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Socket socket;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造器可以接收一个socket</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ClientConnectServerThread</span><span class="params">(Socket socket)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.socket = socket;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 因为Thread需要在后台和服务器通讯，因此需要while循环</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;客户端线程等，等待读取从服务器发送的消息&quot;</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(socket.getInputStream());</span><br><span class="line">                <span class="comment">//如果服务器没有发送Message对象，线程会阻塞在这里</span></span><br><span class="line">                Message message = (Message) ois.readObject();</span><br><span class="line">                <span class="comment">//注意，后面需要去使用message</span></span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//为了更方便的得到socket</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Socket <span class="title">getSocket</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> socket;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 16:19</span></span><br><span class="line"><span class="comment"> * 该类完成用户登录验证 和用户注册等功能</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserClientService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 我们在别的地方可能会用到user信息，因此作为成员属性</span></span><br><span class="line">    <span class="keyword">private</span> User u = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">private</span> Socket socket;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据id和pwd到服务器验证用户是否合法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">checkUser</span><span class="params">(String userId,String pwd)</span></span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> b = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        u.setUserId(userId);</span><br><span class="line">        u.setPasswd(pwd);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//连接到服务器 发送u对象</span></span><br><span class="line">            Socket socket = <span class="keyword">new</span> Socket(InetAddress.getByName(<span class="string">&quot;127.0.0.1&quot;</span>), <span class="number">9999</span>);</span><br><span class="line">            ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(socket.getOutputStream());</span><br><span class="line">            oos.writeObject(u);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取服务器发送的message</span></span><br><span class="line">            ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(socket.getInputStream());</span><br><span class="line">            Message message = (Message) ois.readObject();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 根据message 判断是否登录成功</span></span><br><span class="line">            <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCEED))&#123;<span class="comment">//登录成功</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                <span class="comment">// 创建一个与服务器保持通信的线程 -》创建一个类 ClientConnectServerThread</span></span><br><span class="line">                ClientConnectServerThread clientConnectServerThread = <span class="keyword">new</span> ClientConnectServerThread(socket);</span><br><span class="line">                <span class="comment">//启动客户端线程</span></span><br><span class="line">                clientConnectServerThread.start();</span><br><span class="line">                <span class="comment">//这里为了后面客户端扩展，我们将线程放入集合管理</span></span><br><span class="line">                MangeClientConnectServerThread.addClientConnectServerThread(userId,clientConnectServerThread);</span><br><span class="line">                b = <span class="keyword">true</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">// 登录失败，就不能与服务器进行通信，关闭socket</span></span><br><span class="line">                socket.close();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.服务器在9999端口监听，当有连接时 通过socket关联的对象输入流ObjectInputStream获取用户登录过程发送来的user对象，我们使用HashMap放入了一些合法用户，然后在checkUser方法中判断传入的user是否合法，进而来设置相应的Message返回给客户端。并且创建一个线程，和客户端保持通信，该线程需要持有socket对象。还需要把该线程对象放入到一个集合中，进行管理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 19:23</span></span><br><span class="line"><span class="comment"> * 这是服务端，在监听9999，等待客户端连接，保持通信</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QQServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ServerSocket ss = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">//创建一个集合，存放多个用户，如果是这些用户登录，就认为是合法的</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;String, User&gt; validUsers = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        validUsers.put(<span class="string">&quot;100&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;100&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">        validUsers.put(<span class="string">&quot;200&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;200&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">        validUsers.put(<span class="string">&quot;300&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;300&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">        validUsers.put(<span class="string">&quot;至尊宝&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;至尊宝&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">        validUsers.put(<span class="string">&quot;紫霞仙子&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;紫霞仙子&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">        validUsers.put(<span class="string">&quot;菩提老祖&quot;</span>,<span class="keyword">new</span> User(<span class="string">&quot;菩提老祖&quot;</span>,<span class="string">&quot;123456&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//验证用户是否有效的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkUser</span><span class="params">(String userId,String passwd)</span></span>&#123;</span><br><span class="line">        User user = validUsers.get(userId);</span><br><span class="line">        <span class="keyword">if</span> (user == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!user.getPasswd().equals(passwd))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">QQServer</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;服务端在9999端口监听....&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ss = <span class="keyword">new</span> ServerSocket(<span class="number">9999</span>);<span class="comment">// 如果没有客户端连接，就会阻塞在这里</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)&#123; <span class="comment">//监听时当某个客户端连接后，会继续监听</span></span><br><span class="line">                Socket socket = ss.accept();</span><br><span class="line">                <span class="comment">//得到socket关联的对象输入流</span></span><br><span class="line">                ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(socket.getInputStream());</span><br><span class="line">                User u = (User) ois.readObject(); <span class="comment">//读取客户端发送的user对象</span></span><br><span class="line">                Message message = <span class="keyword">new</span> Message();</span><br><span class="line">                <span class="comment">// 对象输出流</span></span><br><span class="line">                ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(socket.getOutputStream());</span><br><span class="line">                <span class="comment">// 验证用户 从</span></span><br><span class="line">                <span class="keyword">if</span> (checkUser(u.getUserId(),u.getPasswd()))&#123;</span><br><span class="line">                    message.setMesType(MessageType.MESSAGE_LOGIN_SUCCEED);</span><br><span class="line">                    <span class="comment">// 将message对象返回给客户端</span></span><br><span class="line">                    oos.writeObject(message);</span><br><span class="line">                    <span class="comment">//创建一个线程，和客户端保持通信，该线程需要持有socket对象</span></span><br><span class="line">                    ServerConnectClientThread serverConnectClientThread = <span class="keyword">new</span> ServerConnectClientThread(socket,u.getUserId());</span><br><span class="line">                    <span class="comment">//启动该线程</span></span><br><span class="line">                    serverConnectClientThread.start();</span><br><span class="line">                    <span class="comment">// 把该线程对象放入到一个集合中，进行管理</span></span><br><span class="line">                    ManageClientThreads.addClientThread(u.getUserId(),serverConnectClientThread);</span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;用户 id=&quot;</span> + u.getUserId() + <span class="string">&quot; pwd=&quot;</span> + u.getPasswd() + <span class="string">&quot;验证失败&quot;</span>);</span><br><span class="line">                    message.setMesType(MessageType.MESSAGE_LOGIN_FAIL);</span><br><span class="line">                    oos.writeObject(message);</span><br><span class="line">                    <span class="comment">//关闭socket</span></span><br><span class="line">                    socket.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//如果服务端退出while，说明不再监听，因此需要关闭</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ss.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 19:36</span></span><br><span class="line"><span class="comment"> * 用来和客户端保持通讯</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerConnectClientThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Socket socket;</span><br><span class="line">    <span class="keyword">private</span> String userId;<span class="comment">//连接到服务端的用户id</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServerConnectClientThread</span><span class="params">(Socket socket,String userId)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.socket = socket;</span><br><span class="line">        <span class="keyword">this</span>.userId = userId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  <span class="comment">//线程处于run状态，可以发送/接收消息</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;服务端和客户端&quot;</span> + userId + <span class="string">&quot;保持通信，读取数据....&quot;</span>);</span><br><span class="line">                ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(socket.getInputStream());</span><br><span class="line">                Message message = (Message) ois.readObject();</span><br><span class="line">                <span class="comment">// 后面会使用message</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 19:47</span></span><br><span class="line"><span class="comment"> * 该类用来管理和客户端通信的线程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ManageClientThreads</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;String,ServerConnectClientThread&gt; hm = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加线程对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addClientThread</span><span class="params">(String userId,ServerConnectClientThread serverConnectClientThread)</span></span>&#123;</span><br><span class="line">        hm.put(userId,serverConnectClientThread);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过userId获取到线程对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ServerConnectClientThread <span class="title">getServerConnectClientThread</span><span class="params">(String userId)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hm.get(userId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    </p>
+<h3 id="功能实现-—-拉取在线用户列表"><a href="#功能实现-—-拉取在线用户列表" class="headerlink" title="功能实现   —  拉取在线用户列表"></a>功能实现   —  拉取在线用户列表</h3><ol>
+<li><p>功能说明</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/4sLtjH"><img src="%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/4sLtjH.png" alt="4sLtjH.png"></a></p>
+</li>
+</ol>
+<p>说明：首先先定义一下不同的Message类型，然后根据Message类型判断执行相应的业务操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> WYP</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2021-09-25 15:25</span></span><br><span class="line"><span class="comment"> * 表示消息类型</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MessageType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    String MESSAGE_LOGIN_SUCCEED = <span class="string">&quot;1&quot;</span>;<span class="comment">//表示登录成功</span></span><br><span class="line">    String MESSAGE_LOGIN_FAIL = <span class="string">&quot;2&quot;</span>;<span class="comment">//表示登录失败</span></span><br><span class="line">    String MESSAGE_COMM_MES = <span class="string">&quot;3&quot;</span>;<span class="comment">//普通信息包</span></span><br><span class="line">    String MESSAGE_GET_ONLINE_FRIEND = <span class="string">&quot;4&quot;</span>;<span class="comment">//要求返回在线用户列表</span></span><br><span class="line">    String MESSAGE_RET_GET_ONLINE_FRIEND = <span class="string">&quot;5&quot;</span>;<span class="comment">//返回在线用户列表</span></span><br><span class="line">    String MESSAGE_CLIENT_EXIT = <span class="string">&quot;6&quot;</span>;<span class="comment">//客户端请求退出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当用户在登录后页面按下1时，我们调用userClientService.onlineFriendList方法来获取在线用户，在这个方法中需要向服务器去请求在线用户列表，要新建一个Message并设置消息类型为MessageType.MESSAGE_GET_ONLINE_FRIEND。<br>在服务端的服务器客户端连接线程的run方法中，通过判断收到的messgae类型来进行用户列表查询。要查询在线用户列表，我们只能在线程管理类中去找，因为线程管理类包含了当前连接到服务器的所有线程而且还包括userId.<br>我们在ManageClientThreads类里面写一个返回在线用户的方法，并且规定返回的内容以空格的形式分隔。最后将查询到的在线列表以content的形式 以一个Message发送给用户</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 向服务器请求在线用户列表   UserClientService</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onlineFriendList</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//发送一个Message，类型是MESSAGE_GET_ONLINE_FRIEND</span></span><br><span class="line">    Message message = <span class="keyword">new</span> Message();</span><br><span class="line">    message.setSender(u.getUserId());</span><br><span class="line">    message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//发送给服务器  使用当前线程的socket的ObjectOutputStream  当前是已经登录状态 user有值</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//从管理线程中通过userId获取到当前的线程 在通过socket获取到ObjectOutputStream</span></span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(MangeClientConnectServerThread.</span><br><span class="line">                                                        getClientConnectServerThread(u.getUserId()).getSocket().getOutputStream());</span><br><span class="line">        oos.writeObject(message);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServerConnectClientThread 中</span></span><br><span class="line"><span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_GET_ONLINE_FRIEND))&#123;</span><br><span class="line">    <span class="comment">//客户端请求在线用户列表</span></span><br><span class="line">    System.out.println(message.getSender() + <span class="string">&quot;要在线用户列表&quot;</span>);</span><br><span class="line">    String onlineUser = ManageClientThreads.getOnlineUser();</span><br><span class="line">    <span class="comment">//返回message   构建一个message返回给客户端</span></span><br><span class="line">    Message message2 = <span class="keyword">new</span> Message();</span><br><span class="line">    message2.setMesType(MessageType.MESSAGE_RET_GET_ONLINE_FRIEND);</span><br><span class="line">    message2.setContent(onlineUser);</span><br><span class="line">    message2.setGetter(message.getSender());</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回给用户</span></span><br><span class="line">    ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(socket.getOutputStream());</span><br><span class="line">    oos.writeObject(message2);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;其他类型暂时不处理......&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回在线用户列表  ManageClientThreads</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getOnlineUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//集合遍历</span></span><br><span class="line">    Iterator&lt;String&gt; iterator = hm.keySet().iterator();</span><br><span class="line">    String onlineUserList = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">        onlineUserList +=iterator.next().toString() + <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> onlineUserList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="无异常退出系统"><a href="#无异常退出系统" class="headerlink" title="无异常退出系统"></a>无异常退出系统</h3><p><strong>说明</strong>：在用户登录之后的界面中，用户按下 9 选择退出系统时，此时运行的main方法结束了，但是客户端并没有真正的退出。</p>
+<p>原因分析：因为在main方法运行时，还创建了一个和服务端通讯的线程，用户退出时，只是在main线程中退出了，与客户端通讯的线程却没有退出。</p>
+<p><strong>客户端解决方法：</strong></p>
+<ol>
+<li>在main线程调用方法，给服务器端发送一个退出系统的message对象</li>
+<li>调用System.exit(0) // 正常退出 将进程kill</li>
+</ol>
+<p><strong>服务器端解决方法：</strong></p>
+<ol>
+<li> 服务器端和某个客户端通信的线程如果收到一个退出的message后</li>
+<li> 把这个持有的线程关闭</li>
+<li> 退出该线程的run方法（退出while），就是退出线程</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client QQView</span></span><br><span class="line"><span class="comment">//编写方法，退出客户端，并给服务器发送一个退出系统的message对象</span></span><br><span class="line"><span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">logout</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    Message message = <span class="keyword">new</span> Message();</span><br><span class="line">    message.setMesType(MessageType.MESSAGE_CLIENT_EXIT);</span><br><span class="line">    message.setSender(u.getUserId());  <span class="comment">//一定要指明是哪个客户端</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(MangeClientConnectServerThread.</span><br><span class="line">                                                        getClientConnectServerThread(u.getUserId()).getSocket().getOutputStream());</span><br><span class="line">        <span class="comment">//ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());</span></span><br><span class="line">        oos.writeObject(message);</span><br><span class="line">        System.out.println(u.getUserId() + <span class="string">&quot; 退出系统 &quot;</span>);</span><br><span class="line">        System.exit(<span class="number">0</span>); <span class="comment">//结束进程</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务端收到消息后 判断并 正确退出</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(message.getMesType().equals(MessageType.MESSAGE_CLIENT_EXIT))&#123;</span><br><span class="line">    System.out.println(message.getSender() + <span class="string">&quot; 退出 &quot;</span>);</span><br><span class="line">    <span class="comment">//将这个客户端对应的线程从集合中删除</span></span><br><span class="line">    ManageClientThreads.removeServerConnectClientThread(message.getSender());</span><br><span class="line">    socket.close();</span><br><span class="line">    <span class="comment">//退出while循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="私聊"><a href="#私聊" class="headerlink" title="私聊"></a>私聊</h3><p><strong>客户端：</strong></p>
+<ol>
+<li>接收用户希望给某个其他在线用户聊天的内容</li>
+<li>将消息构建成Message对象，通过对应对的socket发送给服务器</li>
+<li>在待收消息的线程（通信线程），读取到发送的message消息并显示即可</li>
+</ol>
+<p><strong>服务端：</strong></p>
+<ol>
+<li>可以读取到客户端发送给某个客户的消息</li>
+<li>从管理线程的集合中，根据message对象的getterId获取到对应线程的socket</li>
+<li>然后将message对象转发给指定客户</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;3&quot;</span>:</span><br><span class="line">	System.out.print(<span class="string">&quot;请输入想聊天的用户号(在线): &quot;</span>);</span><br><span class="line">	String getterId = Utility.readString(<span class="number">50</span>);</span><br><span class="line">	System.out.print(<span class="string">&quot;请输入想说的话：&quot;</span>);</span><br><span class="line">	String content = Utility.readString(<span class="number">100</span>);</span><br><span class="line">	<span class="comment">// 编写一个方法将消息发送给服务端</span></span><br><span class="line">	messageClientService.sendMessageToOne(userId,content,getterId);</span><br><span class="line">	<span class="comment">//System.out.println(&quot;私聊消息&quot;);</span></span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> senderId  发送用户id</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> content   发送的内同</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> getterId  接收用户的id</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessageToOne</span><span class="params">(String senderId, String content, String getterId)</span></span>&#123;</span><br><span class="line">    Message message = <span class="keyword">new</span> Message();</span><br><span class="line">    message.setMesType(MessageType.MESSAGE_COMM_MES);</span><br><span class="line">    message.setSender(senderId);</span><br><span class="line">    message.setContent(content);</span><br><span class="line">    message.setGetter(getterId);</span><br><span class="line">    message.setSendTime(<span class="keyword">new</span> Date().toString());</span><br><span class="line">    System.out.println(senderId + <span class="string">&quot; 对 &quot;</span> + getterId + <span class="string">&quot; 说：&quot;</span> + content);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(MangeClientConnectServerThread.</span><br><span class="line">                                                        getClientConnectServerThread(senderId).getSocket().getOutputStream());</span><br><span class="line">        oos.writeObject(message);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServerConnectClientThread</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(message.getMesType().equals(MessageType.MESSAGE_COMM_MES))&#123;</span><br><span class="line">    String getter = message.getGetter();</span><br><span class="line">    ServerConnectClientThread serverConnectClientThread = ManageClientThreads.getServerConnectClientThread(getter);</span><br><span class="line">    ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(serverConnectClientThread.getSocket().getOutputStream());</span><br><span class="line">    oos.writeObject(message);<span class="comment">//转发，提示如果客户不在线，可以保存到数据库，这样就可以实现离线留言</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ClientConnectServerThread</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_COMM_MES))&#123;</span><br><span class="line">    String sender = message.getSender();</span><br><span class="line">    String getter = message.getGetter();</span><br><span class="line">    String content = message.getContent();</span><br><span class="line">    System.out.println(<span class="string">&quot;\n&quot;</span> + sender + <span class="string">&quot; 对 &quot;</span> + getter + <span class="string">&quot; 说 &quot;</span> + content);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="功能实现-—-群聊"><a href="#功能实现-—-群聊" class="headerlink" title="功能实现 —  群聊"></a>功能实现 —  群聊</h3><p><strong>说明：</strong></p>
+<ol>
+<li><p>一个用户选择群发消息，输入完消息内容后会调用 messageClientService.sendMessageToAll 方法将消息内容和自己的id传进去 ，发送给服务端。</p>
+</li>
+<li><p>服务端收到消息后，将管理线程集合进行遍历，得到所有在线用户线程的socket，然后将消息转发给每个用户。</p>
+</li>
+<li><p>然后用户收到消息后将信息展示出来</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&quot;2&quot;</span>:</span><br><span class="line">	System.out.print(<span class="string">&quot;请输入想对大家说的话: &quot;</span>);</span><br><span class="line">	String s = Utility.readString(<span class="number">100</span>);</span><br><span class="line">	<span class="comment">// 写一个方法 发送给服务端</span></span><br><span class="line">	messageClientService.sendMessageToAll(s,userId);</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> content   发送的内容</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> senderId  发送的用户id</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessageToAll</span><span class="params">(String content,String senderId)</span></span>&#123;</span><br><span class="line">    Message message = <span class="keyword">new</span> Message();</span><br><span class="line">    message.setSender(senderId);</span><br><span class="line">    message.setContent(content);</span><br><span class="line">    message.setMesType(MessageType.MESSAGE_TO_ALL_MES);</span><br><span class="line">    message.setSendTime(<span class="keyword">new</span> Date().toString());</span><br><span class="line">    System.out.println(senderId + <span class="string">&quot; 对大家说：&quot;</span> + content);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(MangeClientConnectServerThread.</span><br><span class="line">                                                        getClientConnectServerThread(senderId).getSocket().getOutputStream());</span><br><span class="line">        oos.writeObject(message);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// server</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_TO_ALL_MES))&#123;</span><br><span class="line">    <span class="comment">//需要遍历 管理线程集合，把所有线程socket都得到，然后将message发送</span></span><br><span class="line">    HashMap&lt;String, ServerConnectClientThread&gt; hm = ManageClientThreads.getHm();</span><br><span class="line">    <span class="keyword">for</span> (String s : hm.keySet())&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.equals(message.getSender()))&#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(hm.get(s).getSocket().getOutputStream());</span><br><span class="line">        oos.writeObject(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_TO_ALL_MES))&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;\n&quot;</span> + message.getSender() + <span class="string">&quot;对大伙说: &quot;</span> + message.getContent());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="功能说明-—-发送文件"><a href="#功能说明-—-发送文件" class="headerlink" title="功能说明  —  发送文件"></a>功能说明  —  发送文件</h3><p><strong>客户端：</strong></p>
+<ol>
+<li>先把文件从磁盘上读取到客户端，字节数组</li>
+<li>把文件对应的字节数组封装到message对象（文件内容，sender，getter）</li>
+<li>将message发送给服务端</li>
+<li>在接收到包含有文件的消息后，将该消息保存到磁盘上</li>
+</ol>
+<p><strong>服务端：</strong></p>
+<ol>
+<li>接收message对象</li>
+<li>拆解message对象的geterid，获取该用户的通讯线程</li>
+<li>将message对象转发给指定用户</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// message  扩展 发送文件</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">byte</span>[] fileBytes;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> fileLen;</span><br><span class="line"><span class="keyword">private</span> String dest;</span><br><span class="line"><span class="keyword">private</span> String src;</span><br><span class="line"><span class="comment">// 增加消息类型</span></span><br><span class="line">String MESSAGE_FILE_MES = <span class="string">&quot;8&quot;</span>;<span class="comment">//发送文件信息包</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 该类完成文件传输服务</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileClientService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendFileToOne</span><span class="params">(String senderId,String src,String dest,String getterId)</span></span>&#123;</span><br><span class="line">        Message message = <span class="keyword">new</span> Message();</span><br><span class="line">        message.setMesType(MessageType.MESSAGE_FILE_MES);</span><br><span class="line">        message.setSender(senderId);</span><br><span class="line">        message.setGetter(getterId);</span><br><span class="line">        message.setSrc(src);</span><br><span class="line">        message.setDest(dest);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将文件读取到byte数组</span></span><br><span class="line">        FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            fis = <span class="keyword">new</span> FileInputStream(src);</span><br><span class="line">            <span class="keyword">byte</span>[] fileBytes = <span class="keyword">new</span> <span class="keyword">byte</span>[(<span class="keyword">int</span>)<span class="keyword">new</span> File(src).length()];</span><br><span class="line">            fis.read(fileBytes);  <span class="comment">// 将src读入程序的字节数组</span></span><br><span class="line">            message.setFileBytes(fileBytes);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (fis != <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    fis.close();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//提示信息</span></span><br><span class="line">        System.out.println(<span class="string">&quot;\n&quot;</span> + senderId + <span class="string">&quot; 给 &quot;</span> + getterId + <span class="string">&quot; 发送文件: &quot;</span> + src +<span class="string">&quot; 到对方的 &quot;</span> + dest);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//发送给服务器</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(MangeClientConnectServerThread.getClientConnectServerThread(senderId).getSocket().getOutputStream());</span><br><span class="line">            oos.writeObject(message);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务端根据getterId转发消息</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_FILE_MES))&#123;</span><br><span class="line">    String getter = message.getGetter();</span><br><span class="line">    ServerConnectClientThread serverConnectClientThread = ManageClientThreads.getServerConnectClientThread(getter);</span><br><span class="line">    ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(serverConnectClientThread.getSocket().getOutputStream());</span><br><span class="line">    oos.writeObject(message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 收取文件客户端 保存文件</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (message.getMesType().equals(MessageType.MESSAGE_FILE_MES))&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;\n&quot;</span> + message.getSender() + <span class="string">&quot; 给 &quot;</span> + message.getGetter() + <span class="string">&quot; 发送文件&quot;</span> + message.getSrc() + <span class="string">&quot; 到&quot;</span> + message.getDest());</span><br><span class="line">    FileOutputStream fos = <span class="keyword">new</span> FileOutputStream(message.getDest());</span><br><span class="line">    fos.write(message.getFileBytes());</span><br><span class="line">    fos.close();</span><br><span class="line">    System.out.println(<span class="string">&quot;保存文件成功~&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="功能实现-—-服务器推送新闻"><a href="#功能实现-—-服务器推送新闻" class="headerlink" title="功能实现  —  服务器推送新闻"></a>功能实现  —  服务器推送新闻</h3><p><strong>服务端：</strong></p>
+<ol>
+<li>推送消息/新闻，本质就是群发消息</li>
+<li>在服务器端启动一条独立线程，专门负责发送推送新闻</li>
+<li>在QQServer中启动推送新闻的线程</li>
+</ol>
+<p><strong>客户端：</strong></p>
+<ol>
+<li>收到消息判断类型为群发 然后读取消息展示</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推送新闻线程  构建消息，遍历所有在线socket 群发消息</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SendNewsToAllService</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//为了可以多次推送新闻</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;请输入服务器要推送的新闻/消息[输入exit退出推送]: &quot;</span>);</span><br><span class="line">            String news = Utility.readString(<span class="number">100</span>);</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">&quot;exit&quot;</span>.equals(news))&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Message message = <span class="keyword">new</span> Message();</span><br><span class="line">            message.setMesType(MessageType.MESSAGE_TO_ALL_MES);</span><br><span class="line">            message.setSender(<span class="string">&quot;服务器&quot;</span>);</span><br><span class="line">            message.setContent(news);</span><br><span class="line">            message.setSendTime(<span class="keyword">new</span> Date().toString());</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;服务器 推送消息给 所有人 说: &quot;</span> + news);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 遍历获取所有在线线程的socket</span></span><br><span class="line">            HashMap&lt;String, ServerConnectClientThread&gt; hm = ManageClientThreads.getHm();</span><br><span class="line">            <span class="keyword">for</span> (String onlineUserId : hm.keySet()) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(hm.get(onlineUserId).getSocket().getOutputStream());</span><br><span class="line">                    oos.writeObject(message);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩展功能"><a href="#扩展功能" class="headerlink" title="扩展功能"></a>扩展功能</h3><ol>
+<li><p>实现离线消息，如果某个用户没有在线，当登录后，可以接收离线的消息</p>
+<p>思路：服务端新建一个集合db 存放离线的message。key：getterId、value：ArrayList<Message>，客户端上线后到这个集合了里去查找有没有发给自己的消息</p>
+<p>客户端：当有客户发送消息/文件，如果对方不在线的话，就把message存放到db里面,</p>
+<p>当用户登录后就去服务端的db里面去查找，如果有getterId = userId，就取出ArrayList的Message对象，发送给客户端即可。</p>
+</li>
+<li><p>实现离线发送文件，如果某个用户没有在线，登陆后，可以接收离线的文件</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/socke/" rel="tag"># socke</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/25/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="prev" title="网络编程">
+                  <i class="fa fa-chevron-left"></i> 网络编程
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">youpeng</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
