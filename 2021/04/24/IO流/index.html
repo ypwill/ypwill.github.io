@@ -23,23 +23,25 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="InputStream字节输入流OutputStream字节输出流用于以字节的形式读取和写入数据">
+<meta name="description" content="文件文件是保存数据的地方，比如word、txt、excel等。它既可以保存图片、也可以是文字等。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java I&#x2F;O流">
-<meta property="og:url" content="http://example.com/2021/04/24/Java-I-O%E6%B5%81/index.html">
+<meta property="og:url" content="http://example.com/2021/04/24/IO%E6%B5%81/index.html">
 <meta property="og:site_name" content="YPBlog">
-<meta property="og:description" content="InputStream字节输入流OutputStream字节输出流用于以字节的形式读取和写入数据">
+<meta property="og:description" content="文件文件是保存数据的地方，比如word、txt、excel等。它既可以保存图片、也可以是文字等。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/04/24/IO%E6%B5%81/IO%E6%B5%81/4fn4gI.png">
+<meta property="og:image" content="http://example.com/2021/04/24/IO%E6%B5%81/IO%E6%B5%81/4fujoD.png">
 <meta property="og:image" content="http://example.com/images/IO.png">
 <meta property="article:published_time" content="2021-04-24T08:39:39.000Z">
-<meta property="article:modified_time" content="2021-04-26T02:29:37.147Z">
+<meta property="article:modified_time" content="2021-09-28T09:10:14.866Z">
 <meta property="article:author" content="youpeng">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/IO.png">
+<meta name="twitter:image" content="http://example.com/2021/04/24/IO%E6%B5%81/IO%E6%B5%81/4fn4gI.png">
 
 
-<link rel="canonical" href="http://example.com/2021/04/24/Java-I-O%E6%B5%81/">
+<link rel="canonical" href="http://example.com/2021/04/24/IO%E6%B5%81/">
 
 
 <script class="page-configurations">
@@ -162,7 +164,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%AD%97%E8%8A%82%E6%B5%81%E7%9A%84%E5%BD%A2%E5%BC%8F%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">以字节流的形式读取文件内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%AD%97%E8%8A%82%E6%B5%81%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%90%91%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">2.</span> <span class="nav-text">以字节流的形式向文件写入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8B%86%E5%88%86%E4%B8%8E%E5%90%88%E5%B9%B6"><span class="nav-number">3.</span> <span class="nav-text">文件拆分与合并</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8B%86%E5%88%86"><span class="nav-number">3.1.</span> <span class="nav-text">文件拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">合并文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O%E5%AD%97%E7%AC%A6%E6%B5%81"><span class="nav-number">4.</span> <span class="nav-text">I&#x2F;O字符流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E7%AC%A6%E6%B5%81%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">使用字符流读取文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E7%AC%A6%E6%B5%81%E6%8A%8A%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%99%E5%85%A5%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">使用字符流把字符串写入到文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E7%BC%93%E5%AD%98%E6%B5%81-BufferReader-PrintWriter"><span class="nav-number"></span> <span class="nav-text">I&#x2F;O缓存流   BufferReader,PrintWriter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%B5%81%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">0.1.</span> <span class="nav-text">使用缓存流读取数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%B5%81%E5%86%99%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-number">0.2.</span> <span class="nav-text">使用缓存流写出数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flush"><span class="nav-number">0.3.</span> <span class="nav-text">flush</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.</span> <span class="nav-text">I&#x2F;O  数据流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%BF%9B%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%AF%BB%E5%86%99"><span class="nav-number">1.0.1.</span> <span class="nav-text">直接进行字符串的读写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8DataInputStream-%E8%AF%BB%E5%8F%96%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E5%BF%85%E9%A1%BB%E6%98%AF%E7%94%B1DataOutputStream-%E5%86%99%E5%87%BA%E7%9A%84%EF%BC%8C%E5%90%A6%E5%88%99%E4%BC%9A%E5%87%BA%E7%8E%B0EOFException%EF%BC%8C%E5%9B%A0%E4%B8%BADataOutputStream-%E5%9C%A8%E5%86%99%E5%87%BA%E7%9A%84%E6%97%B6%E5%80%99%E4%BC%9A%E5%81%9A%E4%B8%80%E4%BA%9B%E7%89%B9%E6%AE%8A%E6%A0%87%E8%AE%B0%EF%BC%8C%E5%8F%AA%E6%9C%89DataInputStream-%E6%89%8D%E8%83%BD%E6%88%90%E5%8A%9F%E7%9A%84%E8%AF%BB%E5%8F%96%E3%80%82"><span class="nav-number">1.0.2.</span> <span class="nav-text">用DataInputStream 读取一个文件，这个文件必须是由DataOutputStream  写出的，否则会出现EOFException，因为DataOutputStream  在写出的时候会做一些特殊标记，只有DataInputStream 才能成功的读取。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%B5%81-ObjectInputStrema-ObjectOutputStream"><span class="nav-number">2.</span> <span class="nav-text">对象流         ObjectInputStrema,ObjectOutputStream</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">序列化一个对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">流关系图</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%B5%81"><span class="nav-number">1.1.</span> <span class="nav-text">文件流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">常用的文件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">相关方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">获取文件相关信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%9A%84%E6%93%8D%E4%BD%9C%E5%92%8C%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4"><span class="nav-number">2.3.</span> <span class="nav-text">目录的操作和文件删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E6%B5%81%E5%8E%9F%E7%90%86%E5%8F%8A%E6%B5%81%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">IO流原理及流的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-IO%E6%B5%81%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">Java IO流原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">流的分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E6%B5%81%E4%BD%93%E7%B3%BB%E5%9B%BE-%E5%B8%B8%E7%94%A8%E7%9A%84%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">IO流体系图-常用的类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FileInputStream-FileOutputStream"><span class="nav-number">4.1.</span> <span class="nav-text">FileInputStream |  FileOutputStream</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FileRead-FileWriter"><span class="nav-number">4.2.</span> <span class="nav-text">FileRead  |  FileWriter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%B5%81%E5%92%8C%E5%A4%84%E7%90%86%E6%B5%81"><span class="nav-number">5.</span> <span class="nav-text">节点流和处理流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">5.1.</span> <span class="nav-text">基本介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%B5%81%E5%92%8C%E5%A4%84%E7%90%86%E6%B5%81-%E2%80%94-%E8%A7%88%E5%9B%BE"><span class="nav-number">5.2.</span> <span class="nav-text">节点流和处理流 — 览图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%B5%81%E5%92%8C%E5%A4%84%E7%90%86%E6%B5%81%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E8%81%94%E7%B3%BB"><span class="nav-number">5.3.</span> <span class="nav-text">节点流和处理流的区别和联系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E4%BD%93%E7%8E%B0%E5%9C%A8%E4%BB%A5%E4%B8%8B%E4%B8%A4%E4%B8%AA%E6%96%B9%E9%9D%A2"><span class="nav-number">5.4.</span> <span class="nav-text">处理流的主要功能体现在以下两个方面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%AD%97%E8%8A%82%E6%B5%81%E7%9A%84%E5%BD%A2%E5%BC%8F%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">6.</span> <span class="nav-text">以字节流的形式读取文件内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%AD%97%E8%8A%82%E6%B5%81%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%90%91%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">7.</span> <span class="nav-text">以字节流的形式向文件写入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8B%86%E5%88%86%E4%B8%8E%E5%90%88%E5%B9%B6"><span class="nav-number">8.</span> <span class="nav-text">文件拆分与合并</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8B%86%E5%88%86"><span class="nav-number">8.1.</span> <span class="nav-text">文件拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%96%87%E4%BB%B6"><span class="nav-number">8.2.</span> <span class="nav-text">合并文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O%E5%AD%97%E7%AC%A6%E6%B5%81"><span class="nav-number">9.</span> <span class="nav-text">I&#x2F;O字符流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E7%AC%A6%E6%B5%81%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">9.1.</span> <span class="nav-text">使用字符流读取文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E7%AC%A6%E6%B5%81%E6%8A%8A%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%99%E5%85%A5%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-number">10.</span> <span class="nav-text">使用字符流把字符串写入到文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E7%BC%93%E5%AD%98%E6%B5%81-BufferReader-PrintWriter"><span class="nav-number"></span> <span class="nav-text">I&#x2F;O缓存流   BufferReader,PrintWriter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%B5%81%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">0.1.</span> <span class="nav-text">使用缓存流读取数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%B5%81%E5%86%99%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-number">0.2.</span> <span class="nav-text">使用缓存流写出数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flush"><span class="nav-number">0.3.</span> <span class="nav-text">flush</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.</span> <span class="nav-text">I&#x2F;O  数据流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%BF%9B%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%AF%BB%E5%86%99"><span class="nav-number">1.0.1.</span> <span class="nav-text">直接进行字符串的读写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8DataInputStream-%E8%AF%BB%E5%8F%96%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E5%BF%85%E9%A1%BB%E6%98%AF%E7%94%B1DataOutputStream-%E5%86%99%E5%87%BA%E7%9A%84%EF%BC%8C%E5%90%A6%E5%88%99%E4%BC%9A%E5%87%BA%E7%8E%B0EOFException%EF%BC%8C%E5%9B%A0%E4%B8%BADataOutputStream-%E5%9C%A8%E5%86%99%E5%87%BA%E7%9A%84%E6%97%B6%E5%80%99%E4%BC%9A%E5%81%9A%E4%B8%80%E4%BA%9B%E7%89%B9%E6%AE%8A%E6%A0%87%E8%AE%B0%EF%BC%8C%E5%8F%AA%E6%9C%89DataInputStream-%E6%89%8D%E8%83%BD%E6%88%90%E5%8A%9F%E7%9A%84%E8%AF%BB%E5%8F%96%E3%80%82"><span class="nav-number">1.0.2.</span> <span class="nav-text">用DataInputStream 读取一个文件，这个文件必须是由DataOutputStream  写出的，否则会出现EOFException，因为DataOutputStream  在写出的时候会做一些特殊标记，只有DataInputStream 才能成功的读取。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%B5%81-ObjectInputStrema-ObjectOutputStream"><span class="nav-number">2.</span> <span class="nav-text">对象流         ObjectInputStrema,ObjectOutputStream</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">序列化一个对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">流关系图</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -230,7 +232,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/Java-I-O%E6%B5%81/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/24/IO%E6%B5%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -261,7 +263,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-04-26 10:29:37" itemprop="dateModified" datetime="2021-04-26T10:29:37+08:00">2021-04-26</time>
+        <time title="Modified: 2021-09-28 17:10:14" itemprop="dateModified" datetime="2021-09-28T17:10:14+08:00">2021-09-28</time>
       </span>
 
   
@@ -274,9 +276,98 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>InputStream字节输入流<br>OutputStream字节输出流<br>用于以字节的形式读取和写入数据</p>
+        <h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><p>文件是保存数据的地方，比如word、txt、excel等。它既可以保存图片、也可以是文字等。</p>
 <span id="more"></span>
 
+<h4 id="文件流"><a href="#文件流" class="headerlink" title="文件流"></a>文件流</h4><p>文件在程序中是以流的形式来操作的</p>
+<p>流：数据再数据源（文件）和程序（内存）之间经历的路径</p>
+<p>输入流：数据从数据源（文件）到程序（内存）的路径</p>
+<p>输出流：数据从程序（内存）到数据源（文件）的路径</p>
+<h3 id="常用的文件操作"><a href="#常用的文件操作" class="headerlink" title="常用的文件操作"></a>常用的文件操作</h3><h4 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h4><ul>
+<li>new File(String pathName)     //根据路径构建一个File对象</li>
+<li>new File(File parent,String childPath)     // 根据父目录文件 + 子路径构建</li>
+<li>new File(String parent,String child)       // 根据父目录 + 子路径</li>
+</ul>
+<h4 id="获取文件相关信息"><a href="#获取文件相关信息" class="headerlink" title="获取文件相关信息"></a>获取文件相关信息</h4><ul>
+<li>getName</li>
+<li>getAbsolutePath</li>
+<li>getParent</li>
+<li>length</li>
+<li>exists</li>
+<li>isFile  /  isDirectory</li>
+</ul>
+<h4 id="目录的操作和文件删除"><a href="#目录的操作和文件删除" class="headerlink" title="目录的操作和文件删除"></a>目录的操作和文件删除</h4><p>mkdir创建一级目录、mkdirs创建多级目录、delete删除空目录或文件</p>
+<h3 id="IO流原理及流的分类"><a href="#IO流原理及流的分类" class="headerlink" title="IO流原理及流的分类"></a>IO流原理及流的分类</h3><h4 id="Java-IO流原理"><a href="#Java-IO流原理" class="headerlink" title="Java IO流原理"></a>Java IO流原理</h4><ol>
+<li>I/O是Input/Outputd的缩写，用于处理数据传输，读写文件和网络通讯等</li>
+<li>java程序中，对于数据的输入、输出操作以”流”的方式进行</li>
+<li>java.io报下提供了各种流的类和接口，用以获取不同类的数据，并通过方法输入或输出数据</li>
+<li>输入input：读取外部数据（磁盘、光盘等存储设备的数据）到内存中。</li>
+<li>输出output：将内存数据输出到硬盘等存储设备</li>
+</ol>
+<h4 id="流的分类"><a href="#流的分类" class="headerlink" title="流的分类"></a>流的分类</h4><ul>
+<li>按操作数据单位不同分为：字节流（8bit）二进制文件，字符流（按字符）文本文件</li>
+<li>按数据流的流向不同分为：输入流，输出流</li>
+<li>按流的角色不同分为：节点流，处理流，包装流</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">（抽象基类）</th>
+<th align="center">字节流</th>
+<th align="center">字符流</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">输入流</td>
+<td align="center">InputStream</td>
+<td align="center">Read</td>
+</tr>
+<tr>
+<td align="center">输出流</td>
+<td align="center">OutputStream</td>
+<td align="center">Writer</td>
+</tr>
+</tbody></table>
+<h3 id="IO流体系图-常用的类"><a href="#IO流体系图-常用的类" class="headerlink" title="IO流体系图-常用的类"></a>IO流体系图-常用的类</h3><p><a target="_blank" rel="noopener" href="https://imgtu.com/i/4fn4gI"><img src="IO%E6%B5%81/4fn4gI.png" alt="4fn4gI.png"></a></p>
+<h4 id="FileInputStream-FileOutputStream"><a href="#FileInputStream-FileOutputStream" class="headerlink" title="FileInputStream |  FileOutputStream"></a>FileInputStream |  FileOutputStream</h4><h4 id="FileRead-FileWriter"><a href="#FileRead-FileWriter" class="headerlink" title="FileRead  |  FileWriter"></a>FileRead  |  FileWriter</h4><h3 id="节点流和处理流"><a href="#节点流和处理流" class="headerlink" title="节点流和处理流"></a>节点流和处理流</h3><h4 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h4><ol>
+<li>节点流可以从一个特定的数据源读写数据，如FileReader、FileWriter</li>
+<li>处理流（也叫包装流）是”连接”在已存在的流（节点流或处理流）之上、为程序提供更为强大的读写功能，也更加灵活，如BufferedReader、BufferedWriter</li>
+</ol>
+<h4 id="节点流和处理流-—-览图"><a href="#节点流和处理流-—-览图" class="headerlink" title="节点流和处理流 — 览图"></a>节点流和处理流 — 览图</h4><p><a target="_blank" rel="noopener" href="https://imgtu.com/i/4fujoD"><img src="IO%E6%B5%81/4fujoD.png" alt="4fujoD.png"></a></p>
+<h4 id="节点流和处理流的区别和联系"><a href="#节点流和处理流的区别和联系" class="headerlink" title="节点流和处理流的区别和联系"></a>节点流和处理流的区别和联系</h4><ol>
+<li>节点流是底层流/低级流，直接根数据源相接</li>
+<li>处理流（包装流）包装节点流，既可以消除不同节点流的实现差异，也可以提供更方便的方法来完成输入输出。</li>
+<li>处理流（包装流）对节点流进行包装，使用了修饰器设计模式、不会直接与数据源相连</li>
+</ol>
+<h4 id="处理流的主要功能体现在以下两个方面"><a href="#处理流的主要功能体现在以下两个方面" class="headerlink" title="处理流的主要功能体现在以下两个方面"></a>处理流的主要功能体现在以下两个方面</h4><ol>
+<li>性能的提高：主要以增加缓冲的方式来提高输入输出的效率</li>
+<li>操作的边界：处理流可能提供了一系列便捷的方法来一次输入输出大批量的数据，使用更加灵活方便</li>
+</ol>
+<p>BufferedReader |  BufferedWritter</p>
+<p>BufferedInputStream | BufferedOutputStream</p>
+<p>对象流 ： ObjectInputStream | ObjectOutputStream</p>
+<p>转换流  InputStreamReader  |  OutputStreamWritter</p>
+<ol>
+<li>InputStreamReader:Reader的子类，可以将InputStream(字节流)包装成(转换)Reader(字符流)</li>
+<li>OutputStreamWriter:Writer的子类，实现将OutputStream(字节流)包装成Writer(字符流)</li>
+<li>当处理纯文本数据时，如果使用字符流效率更高，并且可以有效解决中文问题,所以建议将字节流转换成字符流</li>
+<li>可以在使用时指定编码格式(比如utf-8, gbk , gb.2312, ISO8859-1等)</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">    String filePath = <span class="string">&quot;d:\\a.txt&quot;</span>;</span><br><span class="line"></span><br><span class="line">    BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(</span><br><span class="line">        <span class="keyword">new</span> FileInputStream(filePath), <span class="string">&quot;utf-8&quot;</span>));</span><br><span class="line"></span><br><span class="line">    String s = br.readLine();</span><br><span class="line">    System.out.println(<span class="string">&quot;读取内容=&quot;</span> + s);</span><br><span class="line"></span><br><span class="line">    br.close();</span><br><span class="line"></span><br><span class="line">    OutputStreamWriter osw =</span><br><span class="line">        <span class="keyword">new</span> OutputStreamWriter(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;d:\\a.txt&quot;</span>), <span class="string">&quot;gbk&quot;</span>);</span><br><span class="line">    osw.write(<span class="string">&quot;hello,韩顺平教育~&quot;</span>);</span><br><span class="line"></span><br><span class="line">    osw.close();</span><br><span class="line">    System.out.println(<span class="string">&quot;保存成功~&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>InputStream字节输入流<br>OutputStream字节输出流<br>用于以字节的形式读取和写入数据</p>
 <h3 id="以字节流的形式读取文件内容"><a href="#以字节流的形式读取文件内容" class="headerlink" title="以字节流的形式读取文件内容"></a>以字节流的形式读取文件内容</h3><p>FileInputStream 是InputStream子类，以FileInputStream 为例进行文件读取</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">&quot;D:/test.txt&quot;</span>);</span><br><span class="line">        <span class="comment">//创建基于文件的输入流</span></span><br><span class="line">        FileInputStream fi = <span class="keyword">new</span> FileInputStream(f);</span><br><span class="line">        <span class="comment">//创建字节数组，其长度就是文件的长度</span></span><br><span class="line">        <span class="keyword">byte</span>[] all = <span class="keyword">new</span> <span class="keyword">byte</span>[(<span class="keyword">int</span>)f.length()];</span><br><span class="line">        <span class="comment">//以字节流的形式读取文件所有内容</span></span><br><span class="line">       fi.read(all);</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">byte</span> b : all)&#123;</span><br><span class="line">           System.out.print(b+<span class="string">&quot; &quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       fi.close();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
