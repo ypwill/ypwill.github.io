@@ -23,16 +23,24 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta property="og:type" content="website">
-<meta property="og:title" content="YPBlog">
-<meta property="og:url" content="http://example.com/tags/shellchain/index.html">
+<meta name="description" content="今天遇到的是要写一个文件上传同时还要带有一个json数据的请求接口。先来分析一下，后端需要两个参数，一个参数用来接收上传文件，另一个参数用来接收json数据。后端接收文件可以采用MultipartFile来接收，json数据可以创建对象进行接收， 采用@RequestPart注解进行数据绑定。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="postman请求同时上传文件和json数据的接口">
+<meta property="og:url" content="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/index.html">
 <meta property="og:site_name" content="YPBlog">
+<meta property="og:description" content="今天遇到的是要写一个文件上传同时还要带有一个json数据的请求接口。先来分析一下，后端需要两个参数，一个参数用来接收上传文件，另一个参数用来接收json数据。后端接收文件可以采用MultipartFile来接收，json数据可以创建对象进行接收， 采用@RequestPart注解进行数据绑定。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/5PrZfx.png">
+<meta property="og:image" content="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/5Prl0H.png">
+<meta property="article:published_time" content="2021-10-09T06:26:31.000Z">
+<meta property="article:modified_time" content="2021-10-09T06:28:15.118Z">
 <meta property="article:author" content="youpeng">
+<meta property="article:tag" content="工具">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/5PrZfx.png">
 
 
-<link rel="canonical" href="http://example.com/tags/shellchain/">
+<link rel="canonical" href="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/">
 
 
 <script class="page-configurations">
@@ -40,11 +48,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
-<title>Tag: shellchain | YPBlog</title>
+<title>postman请求同时上传文件和json数据的接口 | YPBlog</title>
   
 
 
@@ -211,70 +219,97 @@
 </noscript>
 
 
-    <div class="main-inner tag posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
-  
-  
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h2 class="collection-header">shellchain
-          <small>Tag</small>
-        </h2>
-      </div>
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          postman请求同时上传文件和json数据的接口
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+
+      <time title="Created: 2021-10-09 14:26:31 / Modified: 14:28:15" itemprop="dateCreated datePublished" datetime="2021-10-09T14:26:31+08:00">2021-10-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>今天遇到的是要写一个文件上传同时还要带有一个json数据的请求接口。先来分析一下，后端需要两个参数，一个参数用来接收上传文件，另一个参数用来接收json数据。后端接收文件可以采用MultipartFile来接收，json数据可以创建对象进行接收， 采用@RequestPart注解进行数据绑定。</p>
+<span id="more"></span>
+
+<p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping(&quot;/upload&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseResult <span class="title">upload</span><span class="params">(<span class="meta">@RequestPart(&quot;files&quot;)</span> MultipartFile[] files,<span class="meta">@RequestPart(&quot;userUploadInfo&quot;)</span>  UserUploadInfo userUploadInfo)</span></span>&#123;</span><br><span class="line">    <span class="comment">//TODO 业务代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接口写好了，需要进行测试。使用postman进行接口测试，在Body里面携带参数，选择form-data</p>
+<p>选择参数类型，点击key值尾部，出现Text和File两种类型供我们选择。点击File：</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/5PrZfx"><img src="postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/5PrZfx.png" alt="5PrZfx.png"></a></p>
+<p>参数req的value数据为你自己需要的json数据。</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/5Prl0H"><img src="postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/5Prl0H.png" alt="5Prl0H.png"></a></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2021-04-01T21:11:22+08:00"
-              content="2021-04-01">
-          04-01
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/04/01/JoTochain%E9%83%A8%E7%BD%B2/" itemprop="url">
-            <span itemprop="name">JoTochain安装部署</span>
-          </a>
-      </div>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"># 工具</a>
+          </div>
 
-      
-    </header>
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/28/%E5%9F%BA%E4%BA%8Esocket%E7%9A%84%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F/" rel="prev" title="基于socket的多用户即时通讯系统">
+                  <i class="fa fa-chevron-left"></i> 基于socket的多用户即时通讯系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
+</div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2021-04-01T21:01:17+08:00"
-              content="2021-04-01">
-          04-01
-        </time>
-      </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/04/01/JoTochain%E6%B5%8B%E8%AF%95/" itemprop="url">
-            <span itemprop="name">JoTochain测试</span>
-          </a>
-      </div>
 
-      
-    </header>
-  </article>
 
-    </div>
-  </div>
-  
-  
-  
+
 
 
 <script>
