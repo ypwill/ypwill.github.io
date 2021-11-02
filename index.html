@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -212,6 +212,87 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/02/JVM%E8%99%9A%E6%8B%9F%E6%9C%BA-StringTable%EF%BC%88%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="youpeng">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YPBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/11/02/JVM%E8%99%9A%E6%8B%9F%E6%9C%BA-StringTable%EF%BC%88%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%89/" class="post-title-link" itemprop="url">JVM虚拟机-StringTable（字符串常量池）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-11-02 15:46:28 / Modified: 15:51:50" itemprop="dateCreated datePublished" datetime="2021-11-02T15:46:28+08:00">2021-11-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="String的基本特性"><a href="#String的基本特性" class="headerlink" title="String的基本特性"></a>String的基本特性</h3><ol>
+<li>String：字符串，使用一对””引起来表示</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">&quot;hello world&quot;</span></span><br><span class="line">String s2 = <span class="keyword">new</span> String(<span class="string">&quot;hello world&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>String 被声明为final的，不可被继承</li>
+<li>String实现了Serializable接口：表示字符串是支持序列化的。实现了Comparable接口：表示String可以比较大小</li>
+<li>String在jdk及以前内部定义了<code>final char value[]</code>用于存储字符串数组，JDK改为byte[]</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/02/JVM%E8%99%9A%E6%8B%9F%E6%9C%BA-StringTable%EF%BC%88%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%89/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -851,84 +932,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/10/11/git%E5%AD%A6%E4%B9%A0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="youpeng">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YPBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">postman请求同时上传文件和json数据的接口</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-09 14:26:31" itemprop="dateCreated datePublished" datetime="2021-10-09T14:26:31+08:00">2021-10-09</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-10-10 09:51:13" itemprop="dateModified" datetime="2021-10-10T09:51:13+08:00">2021-10-10</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>今天遇到的是要写一个文件上传同时还要带有一个json数据的请求接口。先来分析一下，后端需要两个参数，一个参数用来接收上传文件，另一个参数用来接收json数据。后端接收文件可以采用MultipartFile来接收，json数据可以创建对象进行接收， 采用@RequestPart注解进行数据绑定。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/10/09/postman%E8%AF%B7%E6%B1%82%E5%90%8C%E6%97%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%92%8Cjson%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E5%8F%A3/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
